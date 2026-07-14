@@ -1,0 +1,57 @@
+name: FamilyDuty
+options:
+  deploymentTarget:
+    iOS: "17.0"
+settings:
+  base:
+    PRODUCT_BUNDLE_IDENTIFIER: com.familyduty.app
+    SWIFT_VERSION: "5.0"
+targets:
+  FamilyDuty:
+    type: application
+    platform: iOS
+    sources:
+      - FamilyDuty
+    settings:
+      base:
+        INFOPLIST_FILE: FamilyDuty/Info.plist
+        INFOPLIST_KEY_CFBundleDisplayName: 家庭值日
+        TARGETED_DEVICE_FAMILY: "2"
+  FamilyDutyTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources:
+      - FamilyDutyTests
+    dependencies:
+      - target: FamilyDuty
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: YES
+  FamilyDutyUITests:
+    type: bundle.ui-testing
+    platform: iOS
+    sources:
+      - FamilyDutyUITests
+    dependencies:
+      - target: FamilyDuty
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: YES
+schemes:
+  FamilyDuty:
+    build:
+      targets:
+        FamilyDuty: all
+    run:
+      config: Debug
+    archive:
+      config: Release
+  FamilyDutyTests:
+    build:
+      targets:
+        FamilyDuty: build
+        FamilyDutyTests: test
+    test:
+      targets:
+        - FamilyDutyTests
+        - FamilyDutyUITests
