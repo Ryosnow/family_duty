@@ -87,8 +87,13 @@ struct RotationViewModel {
         _ task: ChoreTask,
         assignee: FamilyMember?,
         scheduledDate: Date,
+        deadline: Date? = nil,
         cancellationReason: String?
     ) throws {
+        if cancellationReason == nil {
+            try TaskDeadlineService.validate(deadline: deadline, scheduledDate: scheduledDate, calendar: calendar)
+        }
+
         if let cancellationReason {
             task.status = .cancelled
             task.adjustmentNote = cancellationReason.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -98,6 +103,7 @@ struct RotationViewModel {
             if !calendar.isDate(task.scheduledDate, inSameDayAs: scheduledDate) { changes.append("改期") }
             task.assignee = assignee
             task.scheduledDate = scheduledDate
+            task.deadline = TaskDeadlineService.normalized(deadline: deadline, calendar: calendar)
             task.status = .pending
             if !changes.isEmpty { task.adjustmentNote = changes.joined(separator: "、") }
         }

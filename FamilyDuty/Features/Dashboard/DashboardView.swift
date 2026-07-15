@@ -12,6 +12,14 @@ struct DashboardView: View {
     var body: some View {
         NavigationStack {
             List {
+                let overdueTasks = DashboardViewModel.overdueTasks(from: tasks)
+                if !overdueTasks.isEmpty {
+                    taskSection(
+                        title: "已逾期",
+                        tasks: overdueTasks,
+                        emptyMessage: "没有逾期任务"
+                    )
+                }
                 taskSection(
                     title: "今天",
                     tasks: DashboardViewModel.todayTasks(from: tasks),
@@ -23,7 +31,7 @@ struct DashboardView: View {
                     emptyMessage: "本周没有更多待办"
                 )
                 taskSection(
-                    title: "临时任务",
+                        title: "临时任务",
                     tasks: DashboardViewModel.temporaryTasks(from: tasks),
                     emptyMessage: "还没有临时任务"
                 )
@@ -61,12 +69,26 @@ struct DashboardView: View {
                     Button {
                         if task.assignee == nil { claiming = task } else { completing = task }
                     } label: {
-                        VStack(alignment: .leading, spacing: 4) {
-                            Text(task.title).font(.headline)
-                            Text(task.assignee?.name ?? "待领取").foregroundStyle(.secondary)
-                            Text(task.scheduledDate, format: .dateTime.weekday().month().day())
-                                .font(.caption)
-                                .foregroundStyle(.secondary)
+                        HStack(alignment: .top, spacing: 8) {
+                            if TaskDeadlineService.isOverdue(task, now: .now, calendar: .current) {
+                                Circle()
+                                    .fill(.red)
+                                    .frame(width: 10, height: 10)
+                                    .accessibilityLabel("已逾期")
+                                    .accessibilityIdentifier("task-overdue-indicator-\(task.title)")
+                                    .padding(.top, 6)
+                            }
+
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text(task.title).font(.headline)
+                                Text(task.assignee?.name ?? "待领取").foregroundStyle(.secondary)
+                                Text(task.scheduledDate, format: .dateTime.weekday().month().day())
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+                                Text("最晚：\(TaskDeadlineService.effectiveDeadline(for: task, calendar: .current), format: .dateTime.year().month().day())")
+                                    .font(.caption)
+                                    .foregroundStyle(TaskDeadlineService.isOverdue(task, now: .now, calendar: .current) ? .red : .secondary)
+                            }
                         }
                         .frame(maxWidth: .infinity, minHeight: 44, alignment: .leading)
                     }

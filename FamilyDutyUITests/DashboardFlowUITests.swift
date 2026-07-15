@@ -17,4 +17,15 @@ final class DashboardFlowUITests: XCTestCase {
         XCTAssertFalse(task.waitForExistence(timeout: 1))
         XCTAssertTrue(app.staticTexts["history-扫地-by-小明"].waitForExistence(timeout: 2))
     }
+
+    func testOverdueTaskAppearsInOverdueSectionWithIndicator() {
+        let app = XCUIApplication()
+        app.launchArguments = ["-uiTesting", "-seedOverdueTask"]
+        app.launch()
+
+        XCTAssertTrue(app.staticTexts["已逾期"].waitForExistence(timeout: 3))
+        let task = app.buttons["dashboard-task-逾期任务"]
+        XCTAssertTrue(task.waitForExistence(timeout: 2))
+        XCTAssertTrue(task.label.contains("已逾期"))
+    }
 }

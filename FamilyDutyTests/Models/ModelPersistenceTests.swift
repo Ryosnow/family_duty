@@ -18,4 +18,20 @@ final class ModelPersistenceTests: XCTestCase {
         XCTAssertNil(tasks[0].rule)
         XCTAssertEqual(tasks[0].assignee?.name, "小明")
     }
+
+    func testTaskCanPersistAnOptionalDeadline() throws {
+        let container = try ModelContainerFactory.makeInMemoryContainer()
+        let context = ModelContext(container)
+        var calendar = Calendar(identifier: .iso8601)
+        calendar.timeZone = TimeZone(secondsFromGMT: 0)!
+        let scheduledDate = calendar.date(from: DateComponents(year: 2026, month: 7, day: 15))!
+        let deadline = calendar.date(from: DateComponents(year: 2026, month: 7, day: 18))!
+        let task = ChoreTask(title: "浇花", scheduledDate: scheduledDate, deadline: deadline)
+
+        context.insert(task)
+        try context.save()
+
+        let tasks = try context.fetch(FetchDescriptor<ChoreTask>())
+        XCTAssertEqual(tasks.first?.deadline, deadline)
+    }
 }

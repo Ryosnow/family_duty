@@ -16,14 +16,22 @@ enum TemporaryTaskValidationError: Error, Equatable, LocalizedError {
 @MainActor
 struct TemporaryTaskViewModel {
     let context: ModelContext
+    var calendar: Calendar
+
+    init(context: ModelContext, calendar: Calendar = .current) {
+        self.context = context
+        self.calendar = calendar
+    }
 
     @discardableResult
-    func createTask(title: String, scheduledDate: Date, assignee: FamilyMember?) throws -> ChoreTask {
+    func createTask(title: String, scheduledDate: Date, deadline: Date? = nil, assignee: FamilyMember?) throws -> ChoreTask {
         let trimmedTitle = title.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmedTitle.isEmpty else { throw TemporaryTaskValidationError.missingTitle }
+        try TaskDeadlineService.validate(deadline: deadline, scheduledDate: scheduledDate, calendar: calendar)
         let task = ChoreTask(
             title: trimmedTitle,
             scheduledDate: scheduledDate,
+            deadline: TaskDeadlineService.normalized(deadline: deadline, calendar: calendar),
             assignee: assignee,
             rule: nil,
             isTemporary: true

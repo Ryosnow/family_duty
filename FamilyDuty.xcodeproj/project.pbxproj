@@ -23,6 +23,7 @@
 		2DC798909D85106C4ED22223 /* ClaimTaskSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10480315C74FEE8E1C81D77C /* ClaimTaskSheet.swift */; };
 		37BDCCEC024CA2F63782B3A0 /* RuleEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FAAC6E5AAAC2F9D4B62D5D7 /* RuleEditorView.swift */; };
 		3D1495BA88DE04F30E60B060 /* TaskStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB3734B762DE4C5848F4E86F /* TaskStatus.swift */; };
+		3EABD1D8405C0B285A9DD85A /* TaskDeadlineService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D4F876EAE4FD11FD4155B7D /* TaskDeadlineService.swift */; };
 		3F8090E2EFC57F0242B5BC36 /* MemberOrderEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 346C76E6867CBE5A6503C900 /* MemberOrderEditorView.swift */; };
 		46184B44D3B89DA8E96BB2DE /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4DE04ABD541E930648626A74 /* SettingsView.swift */; };
 		4EFD526DB9DE95F4715FD72D /* ModelContainerFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96A21F43A4155EFD8959BB62 /* ModelContainerFactory.swift */; };
@@ -49,6 +50,7 @@
 		C2C4C060156842E1E508F2E3 /* TaskAdjustmentSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = BAFF07FF1DF87796DB2D4557 /* TaskAdjustmentSheet.swift */; };
 		C5C49C3CDB0101D1F8F56451 /* RotationViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1784C0FA31F9130F50430D89 /* RotationViewModelTests.swift */; };
 		CC6609C6D23C31A250DFDF88 /* OnboardingUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8E3A59A061CBAACA93466ED /* OnboardingUITests.swift */; };
+		CFAF7C337F15B4AF11FA1DB1 /* TaskDeadlineServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB80A490EC50E3C15A3865C3 /* TaskDeadlineServiceTests.swift */; };
 		D0762C5111AEF2F0C61199E3 /* AppLaunchUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E55B334E5CE092C4B0AB255 /* AppLaunchUITests.swift */; };
 		DF4EBC858A4AFFA436759DA3 /* ChoreRule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 786ED13CFFEEA3ACCC567882 /* ChoreRule.swift */; };
 		F83681B71EC411EC8FD48980 /* NotificationSchedulerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F831775EA646B3715452433 /* NotificationSchedulerTests.swift */; };
@@ -78,6 +80,7 @@
 		14B3319E1797AC922AFFEDDA /* DashboardFlowUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardFlowUITests.swift; sourceTree = "<group>"; };
 		1784C0FA31F9130F50430D89 /* RotationViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RotationViewModelTests.swift; sourceTree = "<group>"; };
 		17BC538805CA5CED9E623FE9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		1D4F876EAE4FD11FD4155B7D /* TaskDeadlineService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskDeadlineService.swift; sourceTree = "<group>"; };
 		1D95BE792C7E497DBE4A6404 /* CompletionService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompletionService.swift; sourceTree = "<group>"; };
 		1DBEC84D27703CCC589C7D30 /* FamilyDutyTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = FamilyDutyTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		1E55B334E5CE092C4B0AB255 /* AppLaunchUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLaunchUITests.swift; sourceTree = "<group>"; };
@@ -110,6 +113,7 @@
 		C74897A10254CD0A512E9026 /* AccessibilityUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccessibilityUITests.swift; sourceTree = "<group>"; };
 		C78F7BFE7D37555B719C8376 /* RotationViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RotationViewModel.swift; sourceTree = "<group>"; };
 		C89827E00A42D1DF69F75C6E /* CalendarProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarProvider.swift; sourceTree = "<group>"; };
+		CB80A490EC50E3C15A3865C3 /* TaskDeadlineServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskDeadlineServiceTests.swift; sourceTree = "<group>"; };
 		D2C1D28DED8F0EFB4B4490B3 /* RotationScheduler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RotationScheduler.swift; sourceTree = "<group>"; };
 		D518AA842A15A28848E0801F /* MemberEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemberEditorView.swift; sourceTree = "<group>"; };
 		D65EAADF16C372A6F3E4F98F /* CompletionServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompletionServiceTests.swift; sourceTree = "<group>"; };
@@ -168,6 +172,7 @@
 				BEC955A175A59AFA455C6327 /* NotificationScheduler.swift */,
 				BFCA4B8B97596CF8B9B975AA /* NotificationScheduleRefreshModifier.swift */,
 				D2C1D28DED8F0EFB4B4490B3 /* RotationScheduler.swift */,
+				1D4F876EAE4FD11FD4155B7D /* TaskDeadlineService.swift */,
 				12EFE16C5A4EFD0375AF9F27 /* TaskGenerationService.swift */,
 			);
 			path = Services;
@@ -201,6 +206,7 @@
 				86A737B20F33CAE93EDCF922 /* MemberDeletionServiceTests.swift */,
 				1F831775EA646B3715452433 /* NotificationSchedulerTests.swift */,
 				4A602C5D4201DA0E7C9F8C43 /* RotationSchedulerTests.swift */,
+				CB80A490EC50E3C15A3865C3 /* TaskDeadlineServiceTests.swift */,
 				EF012DA95C6881E4D98E14FE /* TaskGenerationServiceTests.swift */,
 			);
 			path = Services;
@@ -421,6 +427,7 @@
 				37BDCCEC024CA2F63782B3A0 /* RuleEditorView.swift in Sources */,
 				46184B44D3B89DA8E96BB2DE /* SettingsView.swift in Sources */,
 				C2C4C060156842E1E508F2E3 /* TaskAdjustmentSheet.swift in Sources */,
+				3EABD1D8405C0B285A9DD85A /* TaskDeadlineService.swift in Sources */,
 				8C26EF6149703447F8B52A51 /* TaskGenerationService.swift in Sources */,
 				3D1495BA88DE04F30E60B060 /* TaskStatus.swift in Sources */,
 				652CBCBEDE75268EF9CDE80A /* TemporaryTaskEditorView.swift in Sources */,
@@ -441,6 +448,7 @@
 				F83681B71EC411EC8FD48980 /* NotificationSchedulerTests.swift in Sources */,
 				A01EEE988C9B7CD412FE299B /* RotationSchedulerTests.swift in Sources */,
 				C5C49C3CDB0101D1F8F56451 /* RotationViewModelTests.swift in Sources */,
+				CFAF7C337F15B4AF11FA1DB1 /* TaskDeadlineServiceTests.swift in Sources */,
 				7D3908FC4BEA55ABD5D53DDD /* TaskGenerationServiceTests.swift in Sources */,
 				84E95FFEB849DECBCFB4A348 /* TemporaryTaskViewModelTests.swift in Sources */,
 			);

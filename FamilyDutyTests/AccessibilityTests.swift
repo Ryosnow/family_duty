@@ -20,4 +20,16 @@ final class AccessibilityTests: XCTestCase {
         )
         XCTAssertNil(NotificationPermissionPresentation.message(for: .authorized))
     }
+
+    func testOverdueTaskAccessibilityLabelIncludesOverdueState() {
+        var calendar = Calendar(identifier: .iso8601)
+        calendar.timeZone = TimeZone(secondsFromGMT: 0)!
+        let scheduledDate = calendar.date(from: DateComponents(year: 2026, month: 7, day: 10))!
+        let now = calendar.date(from: DateComponents(year: 2026, month: 7, day: 15))!
+        let task = ChoreTask(title: "收快递", scheduledDate: scheduledDate, isTemporary: true)
+
+        XCTAssertTrue(
+            DashboardViewModel.accessibilityLabel(for: task, now: now, calendar: calendar).contains("已逾期")
+        )
+    }
 }

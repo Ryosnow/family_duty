@@ -9,6 +9,8 @@ struct TaskAdjustmentSheet: View {
     let task: ChoreTask
     @State private var memberID: UUID?
     @State private var scheduledDate = Date.now
+    @State private var hasDeadline = false
+    @State private var deadline = Date.now
     @State private var isCancelled = false
     @State private var cancellationReason = ""
     @State private var errorMessage: String?
@@ -25,6 +27,12 @@ struct TaskAdjustmentSheet: View {
                     .disabled(isCancelled)
                     DatePicker("日期", selection: $scheduledDate, displayedComponents: .date)
                         .disabled(isCancelled)
+                    Toggle("设置 Deadline", isOn: $hasDeadline)
+                        .disabled(isCancelled)
+                    if hasDeadline {
+                        DatePicker("最晚日期", selection: $deadline, displayedComponents: .date)
+                            .disabled(isCancelled)
+                    }
                 }
 
                 Section("取消") {
@@ -53,6 +61,8 @@ struct TaskAdjustmentSheet: View {
             .onAppear {
                 memberID = task.assignee?.id
                 scheduledDate = task.scheduledDate
+                hasDeadline = task.deadline != nil
+                deadline = task.deadline ?? task.scheduledDate
                 isCancelled = task.status == .cancelled
                 cancellationReason = task.status == .cancelled ? (task.adjustmentNote ?? "") : ""
             }
@@ -71,6 +81,7 @@ struct TaskAdjustmentSheet: View {
                 task,
                 assignee: member,
                 scheduledDate: scheduledDate,
+                deadline: hasDeadline ? deadline : nil,
                 cancellationReason: isCancelled ? cancellationReason : nil
             )
             dismiss()

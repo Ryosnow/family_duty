@@ -19,11 +19,15 @@ struct AppRootView: View {
     private func seedUITestDataIfNeeded() {
         let arguments = ProcessInfo.processInfo.arguments
         guard arguments.contains("-uiTesting"), members.isEmpty else { return }
-        guard arguments.contains("-seedMember") || arguments.contains("-seedDashboardTask") else { return }
+        guard arguments.contains("-seedMember") || arguments.contains("-seedDashboardTask") || arguments.contains("-seedOverdueTask") else { return }
         let member = FamilyMember(name: "小明", sortOrder: 0)
         context.insert(member)
         if arguments.contains("-seedDashboardTask") {
             context.insert(ChoreTask(title: "扫地", scheduledDate: .now, assignee: member))
+        }
+        if arguments.contains("-seedOverdueTask") {
+            let scheduledDate = Calendar.current.date(byAdding: .day, value: -2, to: .now) ?? .now
+            context.insert(ChoreTask(title: "逾期任务", scheduledDate: scheduledDate, assignee: member))
         }
         try? context.save()
     }

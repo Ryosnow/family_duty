@@ -27,13 +27,39 @@ enum DashboardViewModel {
         }
     }
 
-    static func temporaryTasks(from tasks: [ChoreTask]) -> [ChoreTask] {
-        pendingTasks(from: tasks).filter(\.isTemporary)
+    static func overdueTasks(
+        from tasks: [ChoreTask],
+        now: Date = .now,
+        calendar: Calendar = .current
+    ) -> [ChoreTask] {
+        pendingTasks(from: tasks)
+            .filter { TaskDeadlineService.isOverdue($0, now: now, calendar: calendar) }
+            .sorted {
+                let firstDeadline = TaskDeadlineService.effectiveDeadline(for: $0, calendar: calendar)
+                let secondDeadline = TaskDeadlineService.effectiveDeadline(for: $1, calendar: calendar)
+                if firstDeadline != secondDeadline { return firstDeadline < secondDeadline }
+                return $0.scheduledDate < $1.scheduledDate
+            }
     }
 
-    static func accessibilityLabel(for task: ChoreTask) -> String {
+    static func temporaryTasks(
+        from tasks: [ChoreTask],
+        now: Date = .now,
+        calendar: Calendar = .current
+    ) -> [ChoreTask] {
+        pendingTasks(from: tasks)
+            .filter(\.isTemporary)
+            .filter { !TaskDeadlineService.isOverdue($0, now: now, calendar: calendar) }
+    }
+
+    static func accessibilityLabel(
+        for task: ChoreTask,
+        now: Date = .now,
+        calendar: Calendar = .current
+    ) -> String {
         let assignee = task.assignee?.name ?? "待领取"
         let source = task.isTemporary ? "临时任务" : "固定轮班"
-        return "\(task.title)，负责人\(assignee)，\(source)"
+        let overdue = TaskDeadlineService.isOverdue(task, now: now, calendar: calendar) ? "，已逾期" : ""
+        return "\(task.title)，负责人\(assignee)，\(source)\(overdue)"
     }
 }

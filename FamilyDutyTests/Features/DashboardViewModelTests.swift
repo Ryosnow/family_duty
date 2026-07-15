@@ -19,6 +19,74 @@ final class DashboardViewModelTests: XCTestCase {
 
         XCTAssertEqual(DashboardViewModel.todayTasks(from: [today, later, nextWeek, temporary], now: now, calendar: calendar).map(\.title), ["扫地"])
         XCTAssertEqual(DashboardViewModel.laterThisWeekTasks(from: [today, later, nextWeek, temporary], now: now, calendar: calendar).map(\.title), ["洗碗"])
-        XCTAssertEqual(DashboardViewModel.temporaryTasks(from: [today, later, nextWeek, temporary]).map(\.title), ["收快递"])
+        XCTAssertEqual(
+            DashboardViewModel.temporaryTasks(from: [today, later, nextWeek, temporary], now: now, calendar: calendar).map(\.title),
+            ["收快递"]
+        )
+    }
+
+    func testOverdueTasksIncludePendingTasksPastTheirEffectiveDeadline() {
+        let calendar = testCalendar
+        let now = date(year: 2026, month: 7, day: 15, calendar: calendar)
+        let scheduledDate = date(year: 2026, month: 7, day: 10, calendar: calendar)
+        let task = ChoreTask(title: "扫地", scheduledDate: scheduledDate)
+
+        XCTAssertEqual(
+            DashboardViewModel.overdueTasks(from: [task], now: now, calendar: calendar).map(\.title),
+            ["扫地"]
+        )
+    }
+
+    func testOverdueTasksUseExplicitDeadlineAndSortByDeadlineThenScheduledDate() {
+        let calendar = testCalendar
+        let now = date(year: 2026, month: 7, day: 15, calendar: calendar)
+        let first = ChoreTask(
+            title: "擦桌子",
+            scheduledDate: date(year: 2026, month: 7, day: 8, calendar: calendar),
+            deadline: date(year: 2026, month: 7, day: 12, calendar: calendar)
+        )
+        let second = ChoreTask(
+            title: "浇花",
+            scheduledDate: date(year: 2026, month: 7, day: 9, calendar: calendar),
+            deadline: date(year: 2026, month: 7, day: 13, calendar: calendar)
+        )
+
+        XCTAssertEqual(
+            DashboardViewModel.overdueTasks(from: [second, first], now: now, calendar: calendar).map(\.title),
+            ["擦桌子", "浇花"]
+        )
+    }
+
+    func testCompletedAndCancelledOverdueTasksAreExcluded() {
+        let calendar = testCalendar
+        let now = date(year: 2026, month: 7, day: 15, calendar: calendar)
+        let scheduledDate = date(year: 2026, month: 7, day: 10, calendar: calendar)
+        let completed = ChoreTask(title: "完成", scheduledDate: scheduledDate, status: .completed)
+        let cancelled = ChoreTask(title: "取消", scheduledDate: scheduledDate, status: .cancelled)
+
+        XCTAssertTrue(DashboardViewModel.overdueTasks(from: [completed, cancelled], now: now, calendar: calendar).isEmpty)
+    }
+
+    func testOverdueTemporaryTasksAreNotRepeatedInTemporarySection() {
+        let calendar = testCalendar
+        let now = date(year: 2026, month: 7, day: 15, calendar: calendar)
+        let task = ChoreTask(
+            title: "收快递",
+            scheduledDate: date(year: 2026, month: 7, day: 10, calendar: calendar),
+            isTemporary: true
+        )
+
+        XCTAssertEqual(DashboardViewModel.overdueTasks(from: [task], now: now, calendar: calendar).count, 1)
+        XCTAssertTrue(DashboardViewModel.temporaryTasks(from: [task], now: now, calendar: calendar).isEmpty)
+    }
+
+    private var testCalendar: Calendar {
+        var calendar = Calendar(identifier: .iso8601)
+        calendar.timeZone = TimeZone(secondsFromGMT: 0)!
+        return calendar
+    }
+
+    private func date(year: Int, month: Int, day: Int, calendar: Calendar) -> Date {
+        calendar.date(from: DateComponents(year: year, month: month, day: day))!
     }
 }

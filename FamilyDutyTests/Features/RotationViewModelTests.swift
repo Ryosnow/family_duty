@@ -189,4 +189,83 @@ final class RotationViewModelTests: XCTestCase {
         XCTAssertEqual(task.adjustmentNote, "全家外出")
         XCTAssertTrue(rule.isEnabled)
     }
+
+    func testAdjustingOneTaskCanSetAndClearDeadline() throws {
+        let container = try ModelContainerFactory.makeInMemoryContainer()
+        let context = container.mainContext
+        var calendar = Calendar(identifier: .iso8601)
+        calendar.timeZone = TimeZone(secondsFromGMT: 0)!
+        let scheduledDate = calendar.date(from: DateComponents(year: 2026, month: 7, day: 15))!
+        let deadline = calendar.date(from: DateComponents(year: 2026, month: 7, day: 18))!
+        let member = FamilyMember(name: "小明", sortOrder: 0)
+        let task = ChoreTask(title: "扫地", scheduledDate: scheduledDate, assignee: member)
+        context.insert(member)
+        context.insert(task)
+
+        let viewModel = RotationViewModel(context: context, calendar: calendar)
+        try viewModel.adjust(task, assignee: member, scheduledDate: scheduledDate, deadline: deadline, cancellationReason: nil)
+
+        XCTAssertEqual(task.deadline, calendar.startOfDay(for: deadline))
+
+        try viewModel.adjust(task, assignee: member, scheduledDate: scheduledDate, deadline: nil, cancellationReason: nil)
+
+        XCTAssertNil(task.deadline)
+        XCTAssertEqual(TaskDeadlineService.effectiveDeadline(for: task, calendar: calendar), scheduledDate)
+    }
+
+    func testReschedulingOneTaskCanUpdateDeadline() throws {
+        let container = try ModelContainerFactory.makeInMemoryContainer()
+        let context = container.mainContext
+        var calendar = Calendar(identifier: .iso8601)
+        calendar.timeZone = TimeZone(secondsFromGMT: 0)!
+        let originalDate = calendar.date(from: DateComponents(year: 2026, month: 7, day: 15))!
+        let newDate = calendar.date(from: DateComponents(year: 2026, month: 7, day: 17))!
+        let deadline = calendar.date(from: DateComponents(year: 2026, month: 7, day: 20))!
+        let member = FamilyMember(name: "小明", sortOrder: 0)
+        let task = ChoreTask(title: "扫地", scheduledDate: originalDate, assignee: member)
+        context.insert(member)
+        context.insert(task)
+
+        try RotationViewModel(context: context, calendar: calendar).adjust(
+            task,
+            assignee: member,
+            scheduledDate: newDate,
+            deadline: deadline,
+            cancellationReason: nil
+        )
+
+        XCTAssertEqual(task.scheduledDate, newDate)
+        XCTAssertEqual(task.deadline, calendar.startOfDay(for: deadline))
+    }
+
+    func testAdjustRejectsInvalidDeadlineWithoutPartiallyUpdatingTask() throws {
+        let container = try ModelContainerFactory.makeInMemoryContainer()
+        let context = container.mainContext
+        var calendar = Calendar(identifier: .iso8601)
+        calendar.timeZone = TimeZone(secondsFromGMT: 0)!
+        let scheduledDate = calendar.date(from: DateComponents(year: 2026, month: 7, day: 15))!
+        let invalidDeadline = calendar.date(from: DateComponents(year: 2026, month: 7, day: 14))!
+        let first = FamilyMember(name: "小明", sortOrder: 0)
+        let second = FamilyMember(name: "小红", sortOrder: 1)
+        let task = ChoreTask(title: "扫地", scheduledDate: scheduledDate, assignee: first)
+        context.insert(first)
+        context.insert(second)
+        context.insert(task)
+
+        XCTAssertThrowsError(
+            try RotationViewModel(context: context, calendar: calendar).adjust(
+                task,
+                assignee: second,
+                scheduledDate: calendar.date(byAdding: .day, value: 1, to: scheduledDate)!,
+                deadline: invalidDeadline,
+                cancellationReason: nil
+            )
+        ) { error in
+            XCTAssertEqual(error as? TaskDeadlineValidationError, .beforeScheduledDate)
+        }
+
+        XCTAssertEqual(task.assignee?.id, first.id)
+        XCTAssertEqual(task.scheduledDate, scheduledDate)
+        XCTAssertNil(task.deadline)
+    }
 }

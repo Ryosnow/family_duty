@@ -7,6 +7,8 @@ struct TemporaryTaskEditorView: View {
     @Query(sort: \FamilyMember.sortOrder) private var members: [FamilyMember]
     @State private var title = ""
     @State private var scheduledDate = Date.now
+    @State private var hasDeadline = false
+    @State private var deadline = Date.now
     @State private var assigneeID: UUID?
     @State private var errorMessage: String?
 
@@ -15,6 +17,10 @@ struct TemporaryTaskEditorView: View {
             Form {
                 TextField("任务名称", text: $title)
                 DatePicker("日期", selection: $scheduledDate, displayedComponents: .date)
+                Toggle("设置 Deadline", isOn: $hasDeadline)
+                if hasDeadline {
+                    DatePicker("最晚日期", selection: $deadline, displayedComponents: .date)
+                }
                 Picker("负责人", selection: $assigneeID) {
                     Text("待领取").tag(Optional<UUID>.none)
                     ForEach(members) { member in
@@ -35,6 +41,11 @@ struct TemporaryTaskEditorView: View {
             } message: {
                 Text(errorMessage ?? "未知错误")
             }
+            .onChange(of: hasDeadline) { _, enabled in
+                if enabled {
+                    deadline = scheduledDate
+                }
+            }
         }
     }
 
@@ -43,6 +54,7 @@ struct TemporaryTaskEditorView: View {
             try TemporaryTaskViewModel(context: context).createTask(
                 title: title,
                 scheduledDate: scheduledDate,
+                deadline: hasDeadline ? deadline : nil,
                 assignee: members.first { $0.id == assigneeID }
             )
             dismiss()

@@ -46,6 +46,61 @@ final class TemporaryTaskViewModelTests: XCTestCase {
         }
     }
 
+    func testCreateTaskPersistsExplicitDeadline() throws {
+        let container = try ModelContainerFactory.makeInMemoryContainer()
+        let context = container.mainContext
+        var calendar = Calendar(identifier: .iso8601)
+        calendar.timeZone = TimeZone(secondsFromGMT: 0)!
+        let scheduledDate = calendar.date(from: DateComponents(year: 2026, month: 7, day: 15))!
+        let deadline = calendar.date(from: DateComponents(year: 2026, month: 7, day: 18))!
+
+        let task = try TemporaryTaskViewModel(context: context, calendar: calendar).createTask(
+            title: "整理阳台",
+            scheduledDate: scheduledDate,
+            deadline: deadline,
+            assignee: nil
+        )
+
+        XCTAssertEqual(task.deadline, calendar.startOfDay(for: deadline))
+    }
+
+    func testCreateTaskWithoutDeadlineUsesScheduledDayByDefault() throws {
+        let container = try ModelContainerFactory.makeInMemoryContainer()
+        let context = container.mainContext
+        var calendar = Calendar(identifier: .iso8601)
+        calendar.timeZone = TimeZone(secondsFromGMT: 0)!
+        let scheduledDate = calendar.date(from: DateComponents(year: 2026, month: 7, day: 15))!
+
+        let task = try TemporaryTaskViewModel(context: context).createTask(
+            title: "整理阳台",
+            scheduledDate: scheduledDate,
+            deadline: nil,
+            assignee: nil
+        )
+
+        XCTAssertNil(task.deadline)
+        XCTAssertEqual(TaskDeadlineService.effectiveDeadline(for: task, calendar: calendar), scheduledDate)
+    }
+
+    func testCreateTaskRejectsDeadlineBeforeScheduledDate() throws {
+        let container = try ModelContainerFactory.makeInMemoryContainer()
+        var calendar = Calendar(identifier: .iso8601)
+        calendar.timeZone = TimeZone(secondsFromGMT: 0)!
+        let scheduledDate = calendar.date(from: DateComponents(year: 2026, month: 7, day: 15))!
+        let deadline = calendar.date(from: DateComponents(year: 2026, month: 7, day: 14))!
+
+        XCTAssertThrowsError(
+            try TemporaryTaskViewModel(context: container.mainContext).createTask(
+                title: "整理阳台",
+                scheduledDate: scheduledDate,
+                deadline: deadline,
+                assignee: nil
+            )
+        ) { error in
+            XCTAssertEqual(error as? TaskDeadlineValidationError, .beforeScheduledDate)
+        }
+    }
+
     func testClaimRejectsTaskThatAlreadyHasAssignee() throws {
         let container = try ModelContainerFactory.makeInMemoryContainer()
         let context = container.mainContext
