@@ -2,9 +2,13 @@ import SwiftData
 import SwiftUI
 
 struct DashboardView: View {
+    @Environment(\.modelContext) private var context
     @Query private var tasks: [ChoreTask]
     @Query(sort: \CompletionRecord.completedAt, order: .reverse) private var records: [CompletionRecord]
     @State private var completing: ChoreTask?
+    @State private var quickCompleting: ChoreTask?
+    @State private var isShowingQuickCompletionConfirmation = false
+    @State private var quickCompletionErrorMessage: String?
     @State private var adjusting: ChoreTask?
     @State private var claiming: ChoreTask?
     @State private var isAddingTemporaryTask = false
@@ -84,6 +88,19 @@ struct DashboardView: View {
             .sheet(item: $adjusting) { task in TaskAdjustmentSheet(task: task) }
             .sheet(item: $claiming) { task in ClaimTaskSheet(task: task) }
             .sheet(isPresented: $isAddingTemporaryTask) { TemporaryTaskEditorView() }
+            .quickCompletionConfirmation(
+                task: $quickCompleting,
+                isPresented: $isShowingQuickCompletionConfirmation,
+                onConfirm: completeQuickly
+            )
+            .alert("无法快速完成任务", isPresented: Binding(
+                get: { quickCompletionErrorMessage != nil },
+                set: { if !$0 { quickCompletionErrorMessage = nil } }
+            )) {
+                Button("好", role: .cancel) {}
+            } message: {
+                Text(quickCompletionErrorMessage ?? "未知错误")
+            }
         }
     }
 
@@ -149,32 +166,55 @@ struct DashboardView: View {
                     .familyDutyCard(cornerRadius: FamilyDutyTheme.compactCornerRadius)
             } else {
                 ForEach(tasks) { task in
-                    Button {
-                        if task.assignee == nil { claiming = task } else { completing = task }
-                    } label: {
-                        FamilyDutyTaskCard(
-                            title: TaskPresetCatalog.titleWithoutKnownEmoji(for: task.title),
-                            assignee: task.assignee?.name ?? "待领取",
-                            metadata: task.scheduledDate.formatted(date: .abbreviated, time: .omitted),
-                            deadline: "最晚：\(TaskDeadlineService.effectiveDeadline(for: task, calendar: .current).formatted(date: .abbreviated, time: .omitted))",
-                            symbolName: TaskPresetCatalog.symbolName(for: task.title),
-                            accent: tint,
-                            statusTitle: task.assignee == nil ? "待领取" : nil,
-                            statusSymbolName: task.assignee == nil ? "hand.tap" : nil,
-                            statusTint: FamilyDutyTheme.sunflower,
-                            isOverdue: TaskDeadlineService.isOverdue(task, now: .now, calendar: .current)
-                        )
+                    HStack(spacing: 8) {
+                        Button {
+                            if task.assignee == nil { claiming = task } else { completing = task }
+                        } label: {
+                            FamilyDutyTaskCard(
+                                title: TaskPresetCatalog.titleWithoutKnownEmoji(for: task.title),
+                                assignee: task.assignee?.name ?? "待领取",
+                                metadata: task.scheduledDate.formatted(date: .abbreviated, time: .omitted),
+                                deadline: "最晚：\(TaskDeadlineService.effectiveDeadline(for: task, calendar: .current).formatted(date: .abbreviated, time: .omitted))",
+                                symbolName: TaskPresetCatalog.symbolName(for: task.title),
+                                accent: tint,
+                                memberTint: task.assignee.map { FamilyDutyMemberColor.color(for: $0.colorName) },
+                                statusTitle: task.assignee == nil ? "待领取" : nil,
+                                statusSymbolName: task.assignee == nil ? "hand.tap" : nil,
+                                statusTint: FamilyDutyTheme.sunflower,
+                                isOverdue: TaskDeadlineService.isOverdue(task, now: .now, calendar: .current)
+                            )
+                        }
+                        .buttonStyle(.plain)
+                        .accessibilityLabel(DashboardViewModel.accessibilityLabel(for: task))
+                        .accessibilityHint(task.assignee == nil ? "打开领取页面" : "打开完成确认")
+                        .accessibilityIdentifier("dashboard-task-\(task.id.uuidString)")
+                        if task.assignee != nil {
+                            Button("快速完成", systemImage: "checkmark.circle.fill") {
+                                quickCompleting = task
+                                isShowingQuickCompletionConfirmation = true
+                            }
+                            .labelStyle(.iconOnly)
+                            .font(.title2)
+                            .foregroundStyle(FamilyDutyTheme.fern)
+                            .frame(width: FamilyDutyTheme.minimumHitSize, height: FamilyDutyTheme.minimumHitSize)
+                            .accessibilityIdentifier("dashboard-quick-complete-\(task.id.uuidString)")
+                        }
                     }
-                    .buttonStyle(.plain)
-                    .accessibilityLabel(DashboardViewModel.accessibilityLabel(for: task))
-                    .accessibilityHint(task.assignee == nil ? "打开领取页面" : "打开完成确认")
-                    .accessibilityIdentifier("dashboard-task-\(task.id.uuidString)")
                     .swipeActions {
                         Button("调整") { adjusting = task }
                             .tint(FamilyDutyTheme.sunflower)
                     }
                 }
             }
+        }
+    }
+
+    private func completeQuickly(_ task: ChoreTask) {
+        guard let member = task.assignee else { return }
+        do {
+            try CompletionService(context: context).complete(task, by: member)
+        } catch {
+            quickCompletionErrorMessage = error.localizedDescription
         }
     }
 

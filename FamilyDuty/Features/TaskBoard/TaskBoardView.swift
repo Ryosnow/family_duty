@@ -7,6 +7,9 @@ struct TaskBoardView: View {
     @Query(sort: \FamilyMember.sortOrder) private var members: [FamilyMember]
     @Query(sort: \CompletionRecord.completedAt, order: .reverse) private var records: [CompletionRecord]
     @State private var completing: ChoreTask?
+    @State private var quickCompleting: ChoreTask?
+    @State private var isShowingQuickCompletionConfirmation = false
+    @State private var quickCompletionErrorMessage: String?
     @State private var adjusting: ChoreTask?
     @State private var claiming: ChoreTask?
     @State private var undoing: ChoreTask?
@@ -60,16 +63,7 @@ struct TaskBoardView: View {
                 }
 
                 taskSection(title: "待处理", tasks: sections.pending) { task in
-                    Button {
-                        if task.assignee == nil { claiming = task } else { completing = task }
-                    } label: {
-                        taskRow(task)
-                    }
-                    .accessibilityHint(task.assignee == nil ? "打开领取页面" : "打开完成确认")
-                    .swipeActions {
-                        Button("调整") { adjusting = task }
-                            .tint(.orange)
-                    }
+                    pendingTaskRow(task)
                 }
 
                 taskSection(title: "已完成", tasks: sections.completed) { task in
@@ -117,6 +111,19 @@ struct TaskBoardView: View {
             } message: {
                 Text(undoErrorMessage ?? "未知错误")
             }
+            .quickCompletionConfirmation(
+                task: $quickCompleting,
+                isPresented: $isShowingQuickCompletionConfirmation,
+                onConfirm: completeQuickly
+            )
+            .alert("无法快速完成任务", isPresented: Binding(
+                get: { quickCompletionErrorMessage != nil },
+                set: { if !$0 { quickCompletionErrorMessage = nil } }
+            )) {
+                Button("好", role: .cancel) {}
+            } message: {
+                Text(quickCompletionErrorMessage ?? "未知错误")
+            }
         }
     }
 
@@ -128,6 +135,43 @@ struct TaskBoardView: View {
         } catch {
             undoing = nil
             undoErrorMessage = error.localizedDescription
+        }
+    }
+
+    private func pendingTaskRow(_ task: ChoreTask) -> some View {
+        HStack(spacing: 8) {
+            Button {
+                if task.assignee == nil { claiming = task } else { completing = task }
+            } label: {
+                taskRow(task)
+            }
+            .buttonStyle(.plain)
+            .accessibilityLabel(DashboardViewModel.accessibilityLabel(for: task))
+            .accessibilityHint(task.assignee == nil ? "打开领取页面" : "打开完成确认")
+            if task.assignee != nil {
+                Button("快速完成", systemImage: "checkmark.circle.fill") {
+                    quickCompleting = task
+                    isShowingQuickCompletionConfirmation = true
+                }
+                .labelStyle(.iconOnly)
+                .font(.title2)
+                .foregroundStyle(FamilyDutyTheme.fern)
+                .frame(width: FamilyDutyTheme.minimumHitSize, height: FamilyDutyTheme.minimumHitSize)
+                .accessibilityIdentifier("task-board-quick-complete-\(task.id.uuidString)")
+            }
+        }
+        .swipeActions {
+            Button("调整") { adjusting = task }
+                .tint(.orange)
+        }
+    }
+
+    private func completeQuickly(_ task: ChoreTask) {
+        guard let member = task.assignee else { return }
+        do {
+            try CompletionService(context: context).complete(task, by: member)
+        } catch {
+            quickCompletionErrorMessage = error.localizedDescription
         }
     }
 
@@ -179,7 +223,10 @@ struct TaskBoardView: View {
             VStack(alignment: .leading, spacing: 4) {
                 TaskTitleView(title: task.title)
                     .font(.headline)
-                Text(task.assignee?.name ?? "待领取").foregroundStyle(.secondary)
+                FamilyDutyMemberChip(
+                    name: task.assignee?.name ?? "待领取",
+                    tint: task.assignee.map { FamilyDutyMemberColor.color(for: $0.colorName) } ?? FamilyDutyTheme.sunflower
+                )
                 taskMetadata(task)
             }
         }

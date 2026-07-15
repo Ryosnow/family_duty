@@ -155,6 +155,7 @@ struct FamilyDutyTaskCard: View {
     let deadline: String?
     let symbolName: String
     var accent: Color = FamilyDutyTheme.fern
+    var memberTint: Color?
     var statusTitle: String?
     var statusSymbolName: String?
     var statusTint: Color = FamilyDutyTheme.fern
@@ -178,7 +179,7 @@ struct FamilyDutyTaskCard: View {
                         FamilyDutyStatusPill(title: statusTitle, symbolName: statusSymbolName, tint: statusTint)
                     }
                 }
-                FamilyDutyMemberChip(name: assignee, tint: accent)
+                FamilyDutyMemberChip(name: assignee, tint: memberTint ?? accent)
                 Text(metadata)
                     .font(.subheadline)
                     .foregroundStyle(FamilyDutyTheme.secondaryInk)

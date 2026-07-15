@@ -13,7 +13,16 @@ struct CompletionSheet: View {
         NavigationStack {
             Form {
                 Picker("实际完成人", selection: $memberID) {
-                    ForEach(members) { Text($0.name).tag(Optional($0.id)) }
+                    ForEach(members) { member in
+                        HStack {
+                            FamilyDutyMemberChip(
+                                name: member.name,
+                                tint: FamilyDutyMemberColor.color(for: member.colorName)
+                            )
+                            Spacer()
+                        }
+                        .tag(Optional(member.id))
+                    }
                 }
             }
             .navigationTitle("确认完成")

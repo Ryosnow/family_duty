@@ -14,7 +14,14 @@ struct SettingsView: View {
             List {
                 Section("家庭成员") {
                     ForEach(members) { member in
-                        Button(member.name) { editingMember = member }
+                        Button {
+                            editingMember = member
+                        } label: {
+                            FamilyDutyMemberChip(
+                                name: member.name,
+                                tint: FamilyDutyMemberColor.color(for: member.colorName)
+                            )
+                        }
                             .swipeActions {
                                 Button("删除", role: .destructive) { delete(member) }
                             }

@@ -3,7 +3,9 @@ import SwiftUI
 
 struct OnboardingView: View {
     @Environment(\.modelContext) private var context
-    @State private var memberName = ""
+    @State private var memberDrafts = [
+        OnboardingMemberDraft(colorName: FamilyDutyMemberColor.defaultName(forSortOrder: 0))
+    ]
     @State private var firstRuleTitle = ""
     @State private var errorMessage: String?
 
@@ -13,11 +15,42 @@ struct OnboardingView: View {
                 Section {
                     Text("欢迎使用家庭值日")
                         .font(.largeTitle.bold())
-                    Text("先建立一名家庭成员和第一项固定值日。")
+                    Text("先建立家庭成员和第一项固定值日。")
                         .foregroundStyle(.secondary)
                 }
                 Section("家庭成员") {
-                    TextField("成员姓名", text: $memberName)
+                    ForEach($memberDrafts) { $draft in
+                        VStack(alignment: .leading, spacing: 8) {
+                            TextField("成员姓名", text: $draft.name)
+                            HStack {
+                                Picker("识别颜色", selection: $draft.colorName) {
+                                    ForEach(FamilyDutyMemberColor.options) { option in
+                                        Label(option.title, systemImage: "circle.fill")
+                                            .symbolRenderingMode(.palette)
+                                            .foregroundStyle(option.color)
+                                            .tag(option.name)
+                                    }
+                                }
+                                .accessibilityLabel("成员颜色")
+                                if memberDrafts.count > 1 {
+                                    Button("删除成员", systemImage: "minus.circle", role: .destructive) {
+                                        memberDrafts.removeAll { $0.id == draft.id }
+                                    }
+                                    .labelStyle(.iconOnly)
+                                    .accessibilityLabel("删除成员")
+                                }
+                            }
+                        }
+                        .accessibilityIdentifier("onboarding-member-\(draft.id.uuidString)")
+                    }
+                    Button("添加成员", systemImage: "plus") {
+                        memberDrafts.append(
+                            OnboardingMemberDraft(
+                                colorName: FamilyDutyMemberColor.defaultName(forSortOrder: memberDrafts.count)
+                            )
+                        )
+                    }
+                    .accessibilityIdentifier("onboarding-add-member")
                 }
                 Section("首个轮班") {
                     TextField("首个固定任务", text: $firstRuleTitle)
@@ -38,27 +71,18 @@ struct OnboardingView: View {
     }
 
     private var canFinish: Bool {
-        !memberName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty &&
+        !memberDrafts.isEmpty &&
+        memberDrafts.allSatisfy { !$0.name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty } &&
         !firstRuleTitle.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
     }
 
     private func finish() {
-        let member = FamilyMember(
-            name: memberName.trimmingCharacters(in: .whitespacesAndNewlines),
-            sortOrder: 0
-        )
-        context.insert(member)
         do {
-            try RotationViewModel(context: context).saveRule(
-                title: firstRuleTitle,
-                weekday: Calendar.current.component(.weekday, from: .now),
-                startOfRotationWeek: .now,
-                participants: [member],
-                isEnabled: true,
-                generateThrough: Calendar.current.date(byAdding: .weekOfYear, value: 4, to: .now) ?? .now
+            try OnboardingViewModel(context: context).finish(
+                memberDrafts: memberDrafts,
+                firstRuleTitle: firstRuleTitle
             )
         } catch {
-            context.delete(member)
             errorMessage = error.localizedDescription
         }
     }

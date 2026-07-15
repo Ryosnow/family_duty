@@ -28,4 +28,25 @@ final class DashboardFlowUITests: XCTestCase {
         XCTAssertTrue(task.waitForExistence(timeout: 2))
         XCTAssertTrue(task.label.contains("已逾期"))
     }
+
+    func testQuickCompletionRequiresConfirmationBeforeRemovingTask() {
+        let app = XCUIApplication()
+        app.launchArguments = ["-uiTesting", "-seedDashboardTask"]
+        app.launch()
+
+        let quickComplete = app.buttons.matching(
+            NSPredicate(format: "identifier BEGINSWITH 'dashboard-quick-complete-'")
+        ).firstMatch
+        XCTAssertTrue(quickComplete.waitForExistence(timeout: 3))
+        quickComplete.tap()
+
+        let confirmation = app.alerts["确认完成？"]
+        XCTAssertTrue(confirmation.waitForExistence(timeout: 2))
+        confirmation.buttons["取消"].tap()
+        XCTAssertTrue(app.staticTexts.matching(NSPredicate(format: "label CONTAINS '扫地'")).firstMatch.exists)
+
+        quickComplete.tap()
+        app.alerts["确认完成？"].buttons["确认完成"].tap()
+        XCTAssertFalse(app.staticTexts.matching(NSPredicate(format: "label CONTAINS '扫地'")).firstMatch.exists)
+    }
 }
