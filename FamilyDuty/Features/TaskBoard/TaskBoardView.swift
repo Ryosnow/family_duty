@@ -20,9 +20,13 @@ struct TaskBoardView: View {
         NavigationStack {
             List {
                 Section {
-                    Text("今天共 \(taskCount) 项任务")
-                        .font(.subheadline)
-                        .foregroundStyle(.secondary)
+                    HStack(spacing: 6) {
+                        Text("📋")
+                            .accessibilityHidden(true)
+                        Text("今天共 \(taskCount) 项任务")
+                            .font(.subheadline)
+                            .foregroundStyle(.secondary)
+                    }
                 }
 
                 taskSection(title: "待处理", tasks: sections.pending) { task in
@@ -65,15 +69,30 @@ struct TaskBoardView: View {
         tasks: [ChoreTask],
         @ViewBuilder content: @escaping (ChoreTask) -> Content
     ) -> some View {
-        Section(title) {
+        Section {
             if tasks.isEmpty {
                 Text("暂无任务").foregroundStyle(.secondary)
             } else {
                 ForEach(tasks) { task in
                     content(task)
                         .accessibilityIdentifier("task-board-task-\(task.title)")
+                    }
                 }
+        } header: {
+            HStack(spacing: 6) {
+                Text(sectionEmoji(for: title))
+                    .accessibilityHidden(true)
+                Text(title)
             }
+        }
+    }
+
+    private func sectionEmoji(for title: String) -> String {
+        switch title {
+        case "待处理": "⏳"
+        case "已完成": "✅"
+        case "已取消": "🚫"
+        default: "📋"
         }
     }
 
@@ -90,7 +109,8 @@ struct TaskBoardView: View {
             }
 
             VStack(alignment: .leading, spacing: 4) {
-                Text(task.title).font(.headline)
+                TaskTitleView(title: task.title)
+                    .font(.headline)
                 Text(task.assignee?.name ?? "待领取").foregroundStyle(.secondary)
                 taskMetadata(task)
             }
@@ -100,7 +120,11 @@ struct TaskBoardView: View {
 
     private func completedTaskRow(_ task: ChoreTask) -> some View {
         VStack(alignment: .leading, spacing: 4) {
-            Label(task.title, systemImage: "checkmark.circle.fill")
+            Label {
+                TaskTitleView(title: task.title)
+            } icon: {
+                Image(systemName: "checkmark.circle.fill")
+            }
                 .font(.headline)
                 .foregroundStyle(.secondary)
             if let record = TaskBoardViewModel.latestCompletionRecord(for: task, from: records) {
@@ -122,7 +146,11 @@ struct TaskBoardView: View {
 
     private func cancelledTaskRow(_ task: ChoreTask) -> some View {
         VStack(alignment: .leading, spacing: 4) {
-            Label(task.title, systemImage: "xmark.circle.fill")
+            Label {
+                TaskTitleView(title: task.title)
+            } icon: {
+                Image(systemName: "xmark.circle.fill")
+            }
                 .font(.headline)
                 .foregroundStyle(.secondary)
             Text("已取消")

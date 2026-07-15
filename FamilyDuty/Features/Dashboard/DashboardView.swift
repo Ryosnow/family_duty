@@ -35,16 +35,22 @@ struct DashboardView: View {
                     tasks: DashboardViewModel.temporaryTasks(from: tasks),
                     emptyMessage: "还没有临时任务"
                 )
-                Section("近期完成") {
+                Section {
                     if records.isEmpty {
                         Text("还没有完成记录").foregroundStyle(.secondary)
                     } else {
                         ForEach(records.prefix(8)) { record in
                             let completedByName = record.completedByName ?? record.completedBy?.name ?? "未知"
-                            Text("\(record.task?.title ?? "值日") · \(completedByName) · \(record.completedAt.formatted(date: .omitted, time: .shortened))")
+                            HStack(alignment: .firstTextBaseline, spacing: 6) {
+                                TaskTitleView(title: record.task?.title ?? "值日")
+                                Text("· \(completedByName) · \(record.completedAt.formatted(date: .omitted, time: .shortened))")
+                                    .foregroundStyle(.secondary)
+                            }
                                 .accessibilityIdentifier("history-\(record.task?.title ?? "值日")-by-\(completedByName)")
+                            }
                         }
-                    }
+                } header: {
+                    sectionHeader(title: "近期完成")
                 }
             }
             .navigationTitle("家庭值日")
@@ -61,7 +67,7 @@ struct DashboardView: View {
 
     @ViewBuilder
     private func taskSection(title: String, tasks: [ChoreTask], emptyMessage: String) -> some View {
-        Section(title) {
+        Section {
             if tasks.isEmpty {
                 Text(emptyMessage).foregroundStyle(.secondary)
             } else {
@@ -80,7 +86,8 @@ struct DashboardView: View {
                             }
 
                             VStack(alignment: .leading, spacing: 4) {
-                                Text(task.title).font(.headline)
+                                TaskTitleView(title: task.title)
+                                    .font(.headline)
                                 Text(task.assignee?.name ?? "待领取").foregroundStyle(.secondary)
                                 Text(task.scheduledDate, format: .dateTime.weekday().month().day())
                                     .font(.caption)
@@ -101,6 +108,27 @@ struct DashboardView: View {
                     }
                 }
             }
+        } header: {
+            sectionHeader(title: title)
+        }
+    }
+
+    private func sectionHeader(title: String) -> some View {
+        HStack(spacing: 6) {
+            Text(sectionEmoji(for: title))
+                .accessibilityHidden(true)
+            Text(title)
+        }
+    }
+
+    private func sectionEmoji(for title: String) -> String {
+        switch title {
+        case "已逾期": "⏰"
+        case "今天": "📅"
+        case "本周稍后": "🗓️"
+        case "临时任务": "✨"
+        case "近期完成": "✅"
+        default: "📋"
         }
     }
 }

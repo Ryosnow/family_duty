@@ -39,6 +39,7 @@
 		652CBCBEDE75268EF9CDE80A /* TemporaryTaskEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79E641AFE178550CEC0FDD59 /* TemporaryTaskEditorView.swift */; };
 		670B6513170BF24D475E4CD6 /* ScoreReportViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25CB4C89DFD5B21DA30E8B94 /* ScoreReportViewModelTests.swift */; };
 		670F25B903114A86F6F31585 /* ScoreValidationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1FA62774F9D9E7D081CC0E2 /* ScoreValidationService.swift */; };
+		68C44E61BFBE4AAEDC0D16C9 /* TemporaryTaskPresetFlowUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D7E2DD9519F003C2DEB0AE1 /* TemporaryTaskPresetFlowUITests.swift */; };
 		6E69552710D5213905A71916 /* ChoreTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = B863A390EE10E85CF9EA797D /* ChoreTask.swift */; };
 		6FFA6DF448D37038B4DE3580 /* TaskBoardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CCDEDB32C3148FA529CC55E /* TaskBoardView.swift */; };
 		769A32FDCDCB02090F865165 /* CompletionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D95BE792C7E497DBE4A6404 /* CompletionService.swift */; };
@@ -48,11 +49,14 @@
 		84E95FFEB849DECBCFB4A348 /* TemporaryTaskViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53CC9D61F92F057A604B6272 /* TemporaryTaskViewModelTests.swift */; };
 		87807D608B0F11AEF22E2F09 /* MemberEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D518AA842A15A28848E0801F /* MemberEditorView.swift */; };
 		88DA5B5999A20F4A51AA6B4C /* DashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DED96054579BBBA127E2234 /* DashboardView.swift */; };
+		8AFD00BDBE309DCD3B44AAB2 /* TaskPreset.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F8D46F24C5735DFC9A9953D /* TaskPreset.swift */; };
 		8B9AB47BA42F09DF02BC9855 /* RotationListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B16FCB93498305EEBB6DF260 /* RotationListView.swift */; };
 		8C26EF6149703447F8B52A51 /* TaskGenerationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 12EFE16C5A4EFD0375AF9F27 /* TaskGenerationService.swift */; };
 		90F5ED9C592DD1438603CEAE /* MemberDeletionServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86A737B20F33CAE93EDCF922 /* MemberDeletionServiceTests.swift */; };
 		9E947CC2ED01ECD2BAA574B9 /* DashboardViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB72FBB488CDC53412B2B58E /* DashboardViewModelTests.swift */; };
+		9ED084CF24AAA767518BB0E4 /* TaskTitleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC9CE8F243E140A7E9EA04DC /* TaskTitleView.swift */; };
 		A01EEE988C9B7CD412FE299B /* RotationSchedulerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A602C5D4201DA0E7C9F8C43 /* RotationSchedulerTests.swift */; };
+		A60C46FE0BCB434FEC5BC9C8 /* TaskPresetCatalog.swift in Sources */ = {isa = PBXBuildFile; fileRef = D064DE2EF3FCDEDCECA7EFE0 /* TaskPresetCatalog.swift */; };
 		ACE7808402B3F3F88958CD90 /* FamilyMember.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5614C2F225BCB897FF73F2A6 /* FamilyMember.swift */; };
 		BCE70C12986E36D95460282C /* TaskBoardViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2714CE6633E5B2533FCD6A4C /* TaskBoardViewModel.swift */; };
 		C2C4C060156842E1E508F2E3 /* TaskAdjustmentSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = BAFF07FF1DF87796DB2D4557 /* TaskAdjustmentSheet.swift */; };
@@ -61,6 +65,7 @@
 		CC6609C6D23C31A250DFDF88 /* OnboardingUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8E3A59A061CBAACA93466ED /* OnboardingUITests.swift */; };
 		CFAF7C337F15B4AF11FA1DB1 /* TaskDeadlineServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB80A490EC50E3C15A3865C3 /* TaskDeadlineServiceTests.swift */; };
 		D0762C5111AEF2F0C61199E3 /* AppLaunchUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E55B334E5CE092C4B0AB255 /* AppLaunchUITests.swift */; };
+		D32C6EE09A16CB41C02F3112 /* TaskPresetCatalogTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D9FA522ED5E182B088408B5 /* TaskPresetCatalogTests.swift */; };
 		DF4EBC858A4AFFA436759DA3 /* ChoreRule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 786ED13CFFEEA3ACCC567882 /* ChoreRule.swift */; };
 		F83681B71EC411EC8FD48980 /* NotificationSchedulerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F831775EA646B3715452433 /* NotificationSchedulerTests.swift */; };
 /* End PBXBuildFile section */
@@ -107,11 +112,14 @@
 		53CC9D61F92F057A604B6272 /* TemporaryTaskViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TemporaryTaskViewModelTests.swift; sourceTree = "<group>"; };
 		5614C2F225BCB897FF73F2A6 /* FamilyMember.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FamilyMember.swift; sourceTree = "<group>"; };
 		5DED96054579BBBA127E2234 /* DashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardView.swift; sourceTree = "<group>"; };
+		5F8D46F24C5735DFC9A9953D /* TaskPreset.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskPreset.swift; sourceTree = "<group>"; };
 		616DF19CEA6DB14851BE1F49 /* ModelPersistenceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelPersistenceTests.swift; sourceTree = "<group>"; };
 		67E464E00A2CB5D5992FE579 /* AccessibilityTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccessibilityTests.swift; sourceTree = "<group>"; };
+		6D9FA522ED5E182B088408B5 /* TaskPresetCatalogTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskPresetCatalogTests.swift; sourceTree = "<group>"; };
 		726E50E8B281CF072D40FD2A /* FamilyDuty.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = FamilyDuty.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		786ED13CFFEEA3ACCC567882 /* ChoreRule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChoreRule.swift; sourceTree = "<group>"; };
 		79E641AFE178550CEC0FDD59 /* TemporaryTaskEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TemporaryTaskEditorView.swift; sourceTree = "<group>"; };
+		7D7E2DD9519F003C2DEB0AE1 /* TemporaryTaskPresetFlowUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TemporaryTaskPresetFlowUITests.swift; sourceTree = "<group>"; };
 		86A737B20F33CAE93EDCF922 /* MemberDeletionServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemberDeletionServiceTests.swift; sourceTree = "<group>"; };
 		8A658E416904A633AB56EB1B /* NotificationAuthorizationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationAuthorizationService.swift; sourceTree = "<group>"; };
 		8FAAC6E5AAAC2F9D4B62D5D7 /* RuleEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RuleEditorView.swift; sourceTree = "<group>"; };
@@ -131,6 +139,7 @@
 		C78F7BFE7D37555B719C8376 /* RotationViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RotationViewModel.swift; sourceTree = "<group>"; };
 		C89827E00A42D1DF69F75C6E /* CalendarProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarProvider.swift; sourceTree = "<group>"; };
 		CB80A490EC50E3C15A3865C3 /* TaskDeadlineServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskDeadlineServiceTests.swift; sourceTree = "<group>"; };
+		D064DE2EF3FCDEDCECA7EFE0 /* TaskPresetCatalog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskPresetCatalog.swift; sourceTree = "<group>"; };
 		D2C1D28DED8F0EFB4B4490B3 /* RotationScheduler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RotationScheduler.swift; sourceTree = "<group>"; };
 		D518AA842A15A28848E0801F /* MemberEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemberEditorView.swift; sourceTree = "<group>"; };
 		D65EAADF16C372A6F3E4F98F /* CompletionServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompletionServiceTests.swift; sourceTree = "<group>"; };
@@ -138,6 +147,7 @@
 		E8E3A59A061CBAACA93466ED /* OnboardingUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingUITests.swift; sourceTree = "<group>"; };
 		EB3734B762DE4C5848F4E86F /* TaskStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskStatus.swift; sourceTree = "<group>"; };
 		EB72FBB488CDC53412B2B58E /* DashboardViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardViewModelTests.swift; sourceTree = "<group>"; };
+		EC9CE8F243E140A7E9EA04DC /* TaskTitleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskTitleView.swift; sourceTree = "<group>"; };
 		EF012DA95C6881E4D98E14FE /* TaskGenerationServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskGenerationServiceTests.swift; sourceTree = "<group>"; };
 		EF77E04AEFFF2898E13DF019 /* TaskBoardFlowUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskBoardFlowUITests.swift; sourceTree = "<group>"; };
 		F0FA820013B78B94A598A58D /* FamilyDutyApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FamilyDutyApp.swift; sourceTree = "<group>"; };
@@ -222,6 +232,9 @@
 				10480315C74FEE8E1C81D77C /* ClaimTaskSheet.swift */,
 				BEB6F0D83671725CC47AC31B /* CompletionSheet.swift */,
 				BAFF07FF1DF87796DB2D4557 /* TaskAdjustmentSheet.swift */,
+				5F8D46F24C5735DFC9A9953D /* TaskPreset.swift */,
+				D064DE2EF3FCDEDCECA7EFE0 /* TaskPresetCatalog.swift */,
+				EC9CE8F243E140A7E9EA04DC /* TaskTitleView.swift */,
 				79E641AFE178550CEC0FDD59 /* TemporaryTaskEditorView.swift */,
 				B8423DC1869AECD21EC3AD54 /* TemporaryTaskViewModel.swift */,
 			);
@@ -277,6 +290,7 @@
 				1784C0FA31F9130F50430D89 /* RotationViewModelTests.swift */,
 				25CB4C89DFD5B21DA30E8B94 /* ScoreReportViewModelTests.swift */,
 				BB15A8686894BA4424C6C2E0 /* TaskBoardViewModelTests.swift */,
+				6D9FA522ED5E182B088408B5 /* TaskPresetCatalogTests.swift */,
 				53CC9D61F92F057A604B6272 /* TemporaryTaskViewModelTests.swift */,
 			);
 			path = Features;
@@ -311,6 +325,7 @@
 				14B3319E1797AC922AFFEDDA /* DashboardFlowUITests.swift */,
 				E8E3A59A061CBAACA93466ED /* OnboardingUITests.swift */,
 				EF77E04AEFFF2898E13DF019 /* TaskBoardFlowUITests.swift */,
+				7D7E2DD9519F003C2DEB0AE1 /* TemporaryTaskPresetFlowUITests.swift */,
 			);
 			path = FamilyDutyUITests;
 			sourceTree = "<group>";
@@ -478,7 +493,10 @@
 				BCE70C12986E36D95460282C /* TaskBoardViewModel.swift in Sources */,
 				3EABD1D8405C0B285A9DD85A /* TaskDeadlineService.swift in Sources */,
 				8C26EF6149703447F8B52A51 /* TaskGenerationService.swift in Sources */,
+				8AFD00BDBE309DCD3B44AAB2 /* TaskPreset.swift in Sources */,
+				A60C46FE0BCB434FEC5BC9C8 /* TaskPresetCatalog.swift in Sources */,
 				3D1495BA88DE04F30E60B060 /* TaskStatus.swift in Sources */,
+				9ED084CF24AAA767518BB0E4 /* TaskTitleView.swift in Sources */,
 				652CBCBEDE75268EF9CDE80A /* TemporaryTaskEditorView.swift in Sources */,
 				7C3830AC855F019B8C159DA3 /* TemporaryTaskViewModel.swift in Sources */,
 			);
@@ -501,6 +519,7 @@
 				C3507B7D81285ED0C15928C1 /* TaskBoardViewModelTests.swift in Sources */,
 				CFAF7C337F15B4AF11FA1DB1 /* TaskDeadlineServiceTests.swift in Sources */,
 				7D3908FC4BEA55ABD5D53DDD /* TaskGenerationServiceTests.swift in Sources */,
+				D32C6EE09A16CB41C02F3112 /* TaskPresetCatalogTests.swift in Sources */,
 				84E95FFEB849DECBCFB4A348 /* TemporaryTaskViewModelTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -514,6 +533,7 @@
 				50CF2409A01B36BE74A01AEA /* DashboardFlowUITests.swift in Sources */,
 				CC6609C6D23C31A250DFDF88 /* OnboardingUITests.swift in Sources */,
 				26CA12B008AF45A03EF83BB4 /* TaskBoardFlowUITests.swift in Sources */,
+				68C44E61BFBE4AAEDC0D16C9 /* TemporaryTaskPresetFlowUITests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

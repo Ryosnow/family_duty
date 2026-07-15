@@ -15,7 +15,8 @@ struct RotationListView: View {
                 ForEach(rules) { rule in
                     Button { editingRule = rule } label: {
                         VStack(alignment: .leading, spacing: 4) {
-                            Text(rule.title).font(.headline)
+                            TaskTitleView(title: rule.title)
+                                .font(.headline)
                             Text(summary(for: rule)).foregroundStyle(.secondary)
                         }
                     }

@@ -6,6 +6,7 @@ struct TemporaryTaskEditorView: View {
     @Environment(\.modelContext) private var context
     @Query(sort: \FamilyMember.sortOrder) private var members: [FamilyMember]
     @State private var title = ""
+    @State private var selectedPresetID: String?
     @State private var scheduledDate = Date.now
     @State private var hasDeadline = false
     @State private var deadline = Date.now
@@ -16,7 +17,31 @@ struct TemporaryTaskEditorView: View {
     var body: some View {
         NavigationStack {
             Form {
+                Picker("快速选择任务 🧰", selection: $selectedPresetID) {
+                    Text("选择预设").tag(Optional<String>.none)
+                    ForEach(TaskPresetCatalog.all) { preset in
+                        Text("\(preset.emoji) \(preset.title)")
+                            .tag(Optional(preset.id))
+                            .accessibilityLabel(preset.title)
+                            .accessibilityIdentifier("temporary-task-preset-\(preset.id)")
+                    }
+                }
+                .accessibilityIdentifier("temporary-task-preset-picker")
+                .accessibilityLabel("快速选择任务")
+                .onChange(of: selectedPresetID) { _, presetID in
+                    applyPreset(withID: presetID)
+                }
+
                 TextField("任务名称", text: $title)
+                    .onChange(of: title) { _, newTitle in
+                        guard let selectedPresetID,
+                              let preset = TaskPresetCatalog.all.first(where: { $0.id == selectedPresetID }) else {
+                            return
+                        }
+                        if newTitle != preset.title {
+                            self.selectedPresetID = nil
+                        }
+                    }
                 DatePicker("日期", selection: $scheduledDate, displayedComponents: .date)
                 TextField("得分", text: $scoreText)
                     .keyboardType(.numberPad)
@@ -65,5 +90,13 @@ struct TemporaryTaskEditorView: View {
         } catch {
             errorMessage = error.localizedDescription
         }
+    }
+
+    private func applyPreset(withID id: String?) {
+        guard let id,
+              let preset = TaskPresetCatalog.all.first(where: { $0.id == id }) else {
+            return
+        }
+        title = preset.title
     }
 }
