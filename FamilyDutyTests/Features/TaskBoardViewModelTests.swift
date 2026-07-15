@@ -88,6 +88,31 @@ final class TaskBoardViewModelTests: XCTestCase {
         XCTAssertNil(TaskBoardViewModel.latestCompletionRecord(for: missing, from: [older, newer]))
     }
 
+    func testTodayWorkloadSummariesUseCompletionWorkDateAndIncludeZeroMembers() {
+        let calendar = testCalendar
+        let today = date(year: 2026, month: 7, day: 15, calendar: calendar)
+        let member = FamilyMember(name: "小明", sortOrder: 0)
+        let zeroMember = FamilyMember(name: "小红", sortOrder: 1)
+        let task = ChoreTask(title: "晚完成的任务", scheduledDate: today, score: 3, status: .completed)
+        let record = CompletionRecord(
+            task: task,
+            completedBy: member,
+            completedAt: calendar.date(byAdding: .day, value: 1, to: today)!,
+            calendar: calendar
+        )
+
+        let summaries = TaskBoardViewModel.todayWorkloadSummaries(
+            from: [record],
+            members: [member, zeroMember],
+            now: today,
+            calendar: calendar
+        )
+
+        XCTAssertEqual(summaries.map(\.memberName), ["小明", "小红"])
+        XCTAssertEqual(summaries.map(\.completedCount), [1, 0])
+        XCTAssertEqual(summaries.map(\.totalScore), [3, 0])
+    }
+
     private var testCalendar: Calendar {
         var calendar = Calendar(identifier: .iso8601)
         calendar.timeZone = TimeZone(secondsFromGMT: 0)!

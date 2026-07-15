@@ -8,55 +8,78 @@ struct DashboardView: View {
     @State private var adjusting: ChoreTask?
     @State private var claiming: ChoreTask?
     @State private var isAddingTemporaryTask = false
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+
+    private var todayPendingTasks: [ChoreTask] {
+        DashboardViewModel.todayTasks(from: tasks)
+    }
+
+    private var todayCompletedCount: Int {
+        tasks.filter {
+            $0.status == .completed && Calendar.current.isDate($0.scheduledDate, inSameDayAs: .now)
+        }.count
+    }
+
+    private var todayTotalCount: Int {
+        todayPendingTasks.count + todayCompletedCount
+    }
+
+    private var todayProgress: Double {
+        guard todayTotalCount > 0 else { return 0 }
+        return Double(todayCompletedCount) / Double(todayTotalCount)
+    }
 
     var body: some View {
         NavigationStack {
-            List {
-                let overdueTasks = DashboardViewModel.overdueTasks(from: tasks)
-                if !overdueTasks.isEmpty {
+            ScrollView {
+                LazyVStack(alignment: .leading, spacing: FamilyDutyTheme.sectionSpacing) {
+                    todayProgressHeader
+
+                    if !DashboardViewModel.overdueTasks(from: tasks).isEmpty {
+                        taskSection(
+                            title: "已逾期",
+                            symbolName: "clock.badge.exclamationmark",
+                            tint: FamilyDutyTheme.coral,
+                            tasks: DashboardViewModel.overdueTasks(from: tasks),
+                            emptyMessage: "没有逾期任务"
+                        )
+                    }
+
                     taskSection(
-                        title: "已逾期",
-                        tasks: overdueTasks,
-                        emptyMessage: "没有逾期任务"
+                        title: "今天",
+                        symbolName: "calendar",
+                        tint: FamilyDutyTheme.forest,
+                        tasks: todayPendingTasks,
+                        emptyMessage: "今天没有待办"
                     )
-                }
-                taskSection(
-                    title: "今天",
-                    tasks: DashboardViewModel.todayTasks(from: tasks),
-                    emptyMessage: "今天没有待办"
-                )
-                taskSection(
-                    title: "本周稍后",
-                    tasks: DashboardViewModel.laterThisWeekTasks(from: tasks),
-                    emptyMessage: "本周没有更多待办"
-                )
-                taskSection(
+                    taskSection(
+                        title: "本周稍后",
+                        symbolName: "calendar.badge.clock",
+                        tint: FamilyDutyTheme.fern,
+                        tasks: DashboardViewModel.laterThisWeekTasks(from: tasks),
+                        emptyMessage: "本周没有更多待办"
+                    )
+                    taskSection(
                         title: "临时任务",
-                    tasks: DashboardViewModel.temporaryTasks(from: tasks),
-                    emptyMessage: "还没有临时任务"
-                )
-                Section {
-                    if records.isEmpty {
-                        Text("还没有完成记录").foregroundStyle(.secondary)
-                    } else {
-                        ForEach(records.prefix(8)) { record in
-                            let completedByName = record.completedByName ?? record.completedBy?.name ?? "未知"
-                            HStack(alignment: .firstTextBaseline, spacing: 6) {
-                                TaskTitleView(title: record.task?.title ?? "值日")
-                                Text("· \(completedByName) · \(record.completedAt.formatted(date: .omitted, time: .shortened))")
-                                    .foregroundStyle(.secondary)
-                            }
-                                .accessibilityIdentifier("history-\(record.task?.title ?? "值日")-by-\(completedByName)")
-                            }
-                        }
-                } header: {
-                    sectionHeader(title: "近期完成")
+                        symbolName: "sparkles",
+                        tint: FamilyDutyTheme.sunflower,
+                        tasks: DashboardViewModel.temporaryTasks(from: tasks),
+                        emptyMessage: "还没有临时任务"
+                    )
+                    recentHistory
                 }
+                .frame(maxWidth: 900, alignment: .leading)
+                .frame(maxWidth: .infinity, alignment: .center)
+                .padding(.horizontal, FamilyDutyTheme.pagePadding)
+                .padding(.vertical, 24)
             }
+            .background(FamilyDutyTheme.pageBackground.ignoresSafeArea())
             .navigationTitle("家庭值日")
             .toolbar {
-                Button("新增临时任务", systemImage: "plus") { isAddingTemporaryTask = true }
-                    .accessibilityIdentifier("dashboard-add-temporary")
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button("新增临时任务", systemImage: "plus") { isAddingTemporaryTask = true }
+                        .accessibilityIdentifier("dashboard-add-temporary")
+                }
             }
             .sheet(item: $completing) { task in CompletionSheet(task: task) }
             .sheet(item: $adjusting) { task in TaskAdjustmentSheet(task: task) }
@@ -65,70 +88,129 @@ struct DashboardView: View {
         }
     }
 
+    private var todayProgressHeader: some View {
+        HStack(alignment: .center, spacing: 20) {
+            VStack(alignment: .leading, spacing: 12) {
+                Text(Date.now, format: .dateTime.weekday(.wide).month().day())
+                    .font(.subheadline.weight(.medium))
+                    .foregroundStyle(.white.opacity(0.78))
+                Text("今天一起把家照顾好")
+                    .font(.largeTitle.weight(.bold))
+                    .foregroundStyle(.white)
+                    .fixedSize(horizontal: false, vertical: true)
+                Text(todayTotalCount == 0 ? "先安排一项值日，今天就有小目标了。" : "每个人出一点力，家里就会更轻松。")
+                    .font(.subheadline)
+                    .foregroundStyle(.white.opacity(0.82))
+                    .fixedSize(horizontal: false, vertical: true)
+                Button("新增临时任务", systemImage: "plus") { isAddingTemporaryTask = true }
+                    .buttonStyle(.borderedProminent)
+                    .tint(FamilyDutyTheme.sunflower)
+                    .foregroundStyle(FamilyDutyTheme.forest)
+                    .frame(minHeight: FamilyDutyTheme.minimumHitSize)
+                    .accessibilityIdentifier("dashboard-add-temporary")
+            }
+            Spacer(minLength: 0)
+            FamilyDutyProgressRing(
+                progress: todayProgress,
+                completed: todayCompletedCount,
+                total: todayTotalCount
+            )
+        }
+        .padding(24)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(FamilyDutyTheme.forest, in: RoundedRectangle(cornerRadius: 26, style: .continuous))
+        .overlay(alignment: .topTrailing) {
+            Circle()
+                .fill(FamilyDutyTheme.mint.opacity(0.18))
+                .frame(width: 130, height: 130)
+                .offset(x: 38, y: -54)
+                .accessibilityHidden(true)
+        }
+        .clipShape(RoundedRectangle(cornerRadius: 26, style: .continuous))
+        .accessibilityIdentifier("dashboard-progress-card")
+        .scaleEffect(reduceMotion ? 1 : 1)
+    }
+
     @ViewBuilder
-    private func taskSection(title: String, tasks: [ChoreTask], emptyMessage: String) -> some View {
-        Section {
+    private func taskSection(
+        title: String,
+        symbolName: String,
+        tint: Color,
+        tasks: [ChoreTask],
+        emptyMessage: String
+    ) -> some View {
+        VStack(alignment: .leading, spacing: 12) {
+            FamilyDutySectionHeader(title: title, symbolName: symbolName, tint: tint, count: tasks.isEmpty ? nil : tasks.count)
             if tasks.isEmpty {
-                Text(emptyMessage).foregroundStyle(.secondary)
+                Text(emptyMessage)
+                    .font(.subheadline)
+                    .foregroundStyle(FamilyDutyTheme.secondaryInk)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.horizontal, FamilyDutyTheme.cardPadding)
+                    .frame(minHeight: FamilyDutyTheme.minimumHitSize)
+                    .familyDutyCard(cornerRadius: FamilyDutyTheme.compactCornerRadius)
             } else {
                 ForEach(tasks) { task in
                     Button {
                         if task.assignee == nil { claiming = task } else { completing = task }
                     } label: {
-                        HStack(alignment: .top, spacing: 8) {
-                            if TaskDeadlineService.isOverdue(task, now: .now, calendar: .current) {
-                                Circle()
-                                    .fill(.red)
-                                    .frame(width: 10, height: 10)
-                                    .accessibilityLabel("已逾期")
-                                    .accessibilityIdentifier("task-overdue-indicator-\(task.title)")
-                                    .padding(.top, 6)
-                            }
-
-                            VStack(alignment: .leading, spacing: 4) {
-                                TaskTitleView(title: task.title)
-                                    .font(.headline)
-                                Text(task.assignee?.name ?? "待领取").foregroundStyle(.secondary)
-                                Text(task.scheduledDate, format: .dateTime.weekday().month().day())
-                                    .font(.caption)
-                                    .foregroundStyle(.secondary)
-                                Text("最晚：\(TaskDeadlineService.effectiveDeadline(for: task, calendar: .current), format: .dateTime.year().month().day())")
-                                    .font(.caption)
-                                    .foregroundStyle(TaskDeadlineService.isOverdue(task, now: .now, calendar: .current) ? .red : .secondary)
-                            }
-                        }
-                        .frame(maxWidth: .infinity, minHeight: 44, alignment: .leading)
+                        FamilyDutyTaskCard(
+                            title: TaskPresetCatalog.titleWithoutKnownEmoji(for: task.title),
+                            assignee: task.assignee?.name ?? "待领取",
+                            metadata: task.scheduledDate.formatted(date: .abbreviated, time: .omitted),
+                            deadline: "最晚：\(TaskDeadlineService.effectiveDeadline(for: task, calendar: .current).formatted(date: .abbreviated, time: .omitted))",
+                            symbolName: TaskPresetCatalog.symbolName(for: task.title),
+                            accent: tint,
+                            statusTitle: task.assignee == nil ? "待领取" : nil,
+                            statusSymbolName: task.assignee == nil ? "hand.tap" : nil,
+                            statusTint: FamilyDutyTheme.sunflower,
+                            isOverdue: TaskDeadlineService.isOverdue(task, now: .now, calendar: .current)
+                        )
                     }
+                    .buttonStyle(.plain)
                     .accessibilityLabel(DashboardViewModel.accessibilityLabel(for: task))
                     .accessibilityHint(task.assignee == nil ? "打开领取页面" : "打开完成确认")
                     .accessibilityIdentifier("dashboard-task-\(task.title)")
                     .swipeActions {
                         Button("调整") { adjusting = task }
-                            .tint(.orange)
+                            .tint(FamilyDutyTheme.sunflower)
                     }
                 }
             }
-        } header: {
-            sectionHeader(title: title)
         }
     }
 
-    private func sectionHeader(title: String) -> some View {
-        HStack(spacing: 6) {
-            Text(sectionEmoji(for: title))
-                .accessibilityHidden(true)
-            Text(title)
-        }
-    }
-
-    private func sectionEmoji(for title: String) -> String {
-        switch title {
-        case "已逾期": "⏰"
-        case "今天": "📅"
-        case "本周稍后": "🗓️"
-        case "临时任务": "✨"
-        case "近期完成": "✅"
-        default: "📋"
+    private var recentHistory: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            FamilyDutySectionHeader(title: "近期完成", symbolName: "checkmark.circle", tint: FamilyDutyTheme.fern, count: records.isEmpty ? nil : min(records.count, 8))
+            if records.isEmpty {
+                Text("还没有完成记录")
+                    .font(.subheadline)
+                    .foregroundStyle(FamilyDutyTheme.secondaryInk)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.horizontal, FamilyDutyTheme.cardPadding)
+                    .frame(minHeight: FamilyDutyTheme.minimumHitSize)
+                    .familyDutyCard(cornerRadius: FamilyDutyTheme.compactCornerRadius)
+            } else {
+                ForEach(records.prefix(8)) { record in
+                    let completedByName = record.completedByName ?? record.completedBy?.name ?? "未知"
+                    HStack(alignment: .center, spacing: 12) {
+                        FamilyDutyIconBadge(symbolName: "checkmark", tint: FamilyDutyTheme.fern, accessibilityLabel: "已完成", size: 36)
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text(TaskPresetCatalog.titleWithoutKnownEmoji(for: record.task?.title ?? "值日"))
+                                .font(.subheadline.weight(.semibold))
+                                .foregroundStyle(FamilyDutyTheme.ink)
+                            Text("\(completedByName) · \(record.completedAt.formatted(date: .omitted, time: .shortened))")
+                                .font(.caption)
+                                .foregroundStyle(FamilyDutyTheme.secondaryInk)
+                        }
+                        Spacer(minLength: 0)
+                    }
+                    .padding(FamilyDutyTheme.cardPadding)
+                    .familyDutyCard(cornerRadius: FamilyDutyTheme.compactCornerRadius)
+                    .accessibilityIdentifier("history-\(record.task?.title ?? "值日")-by-\(completedByName)")
+                }
+            }
         }
     }
 }

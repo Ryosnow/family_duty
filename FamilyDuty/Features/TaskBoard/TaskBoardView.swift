@@ -3,6 +3,7 @@ import SwiftUI
 
 struct TaskBoardView: View {
     @Query private var tasks: [ChoreTask]
+    @Query(sort: \FamilyMember.sortOrder) private var members: [FamilyMember]
     @Query(sort: \CompletionRecord.completedAt, order: .reverse) private var records: [CompletionRecord]
     @State private var completing: ChoreTask?
     @State private var adjusting: ChoreTask?
@@ -16,9 +17,35 @@ struct TaskBoardView: View {
         sections.pending.count + sections.completed.count + sections.cancelled.count
     }
 
+    private var workloadSummaries: [MemberWorkloadSummary] {
+        TaskBoardViewModel.todayWorkloadSummaries(
+            from: records,
+            members: members,
+            now: .now,
+            calendar: .current
+        )
+    }
+
     var body: some View {
         NavigationStack {
             List {
+                Section {
+                    WorkloadSummaryView(title: "今日工作量", summaries: workloadSummaries)
+                        .listRowInsets(EdgeInsets(top: 8, leading: 0, bottom: 8, trailing: 0))
+                        .listRowBackground(Color.clear)
+                        .accessibilityIdentifier("task-board-summary")
+
+                    NavigationLink {
+                        ReportsView()
+                    } label: {
+                        Label("查看历史报表", systemImage: "clock.arrow.circlepath")
+                            .font(.subheadline.weight(.semibold))
+                            .foregroundStyle(FamilyDutyTheme.forest)
+                            .frame(minHeight: FamilyDutyTheme.minimumHitSize, alignment: .leading)
+                    }
+                    .accessibilityIdentifier("task-board-history-reports")
+                }
+
                 Section {
                     HStack(spacing: 6) {
                         Text("📋")

@@ -68,4 +68,18 @@ enum TaskBoardViewModel {
             .filter { $0.task?.id == task.id }
             .max { $0.completedAt < $1.completedAt }
     }
+
+    static func todayWorkloadSummaries(
+        from records: [CompletionRecord],
+        members: [FamilyMember],
+        now: Date = .now,
+        calendar: Calendar = .current
+    ) -> [MemberWorkloadSummary] {
+        ScoreReportViewModel.summaries(
+            for: .day(now),
+            members: members,
+            records: records,
+            calendar: calendar
+        )
+    }
 }
