@@ -56,6 +56,8 @@ docs/plans/        功能实现和设计计划
 project.yml        XcodeGen 工程配置
 ```
 
+完整的代码分层、模块职责、数据关系和计划文件映射见 [`docs/architecture.md`](docs/architecture.md)；各功能模块的详细操作、状态和验收边界见 [`docs/functional-architecture.md`](docs/functional-architecture.md)。
+
 ## 生成并打开工程
 
 ```bash
