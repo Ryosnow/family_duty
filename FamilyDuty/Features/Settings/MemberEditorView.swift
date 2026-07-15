@@ -43,6 +43,7 @@ struct MemberEditorView: View {
             try context.save()
             dismiss()
         } catch {
+            context.rollback()
             errorMessage = error.localizedDescription
         }
     }

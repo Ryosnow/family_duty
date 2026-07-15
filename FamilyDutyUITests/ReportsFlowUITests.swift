@@ -11,7 +11,7 @@ final class ReportsFlowUITests: XCTestCase {
         reportsTab.tap()
 
         XCTAssertTrue(app.navigationBars["报表"].waitForExistence(timeout: 3))
-        XCTAssertTrue(app.otherElements["reports-view"].exists)
+        XCTAssertTrue(app.descendants(matching: .any)["reports-view"].exists)
         XCTAssertTrue(app.buttons["reports-previous-period"].exists)
         XCTAssertTrue(app.buttons["reports-next-period"].exists)
         XCTAssertTrue(app.staticTexts["小明"].exists)

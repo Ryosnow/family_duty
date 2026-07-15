@@ -102,7 +102,7 @@ struct TaskBoardView: View {
             } else {
                 ForEach(tasks) { task in
                     content(task)
-                        .accessibilityIdentifier("task-board-task-\(task.title)")
+                        .accessibilityIdentifier("task-board-task-\(task.id.uuidString)")
                     }
                 }
         } header: {
@@ -131,7 +131,7 @@ struct TaskBoardView: View {
                     .fill(.red)
                     .frame(width: 10, height: 10)
                     .accessibilityLabel("已逾期")
-                    .accessibilityIdentifier("task-board-overdue-\(task.title)")
+                    .accessibilityIdentifier("task-board-overdue-\(task.id.uuidString)")
                     .padding(.top, 6)
             }
 

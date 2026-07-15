@@ -52,6 +52,24 @@ final class NotificationSchedulerTests: XCTestCase {
         XCTAssertEqual(overdue.dateComponents.hour, 20)
     }
 
+    func testRefreshDoesNotScheduleTaskBeforeItsExplicitDeadline() async throws {
+        let calendar = Calendar(identifier: .iso8601)
+        let today = calendar.startOfDay(for: .now)
+        let scheduledDate = calendar.date(byAdding: .day, value: -1, to: today)!
+        let deadline = calendar.date(byAdding: .day, value: 2, to: today)!
+        let client = NotificationCenterClientSpy()
+        let scheduler = NotificationScheduler(client: client, calendar: calendar)
+        let task = ChoreTask(title: "整理阳台", scheduledDate: scheduledDate, deadline: deadline)
+
+        try await scheduler.refreshSchedule(
+            for: [task],
+            settings: NotificationSettings(isEnabled: true, dailySummaryHour: 8, overdueHour: 20),
+            now: today
+        )
+
+        XCTAssertNil(client.added.first { $0.identifier == NotificationScheduler.overdueIdentifier })
+    }
+
     func testRefreshRemovesOnlyPreviouslyManagedRequests() async throws {
         let client = NotificationCenterClientSpy()
         client.pendingIdentifiers = [

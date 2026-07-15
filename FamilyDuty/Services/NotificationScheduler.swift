@@ -44,7 +44,7 @@ struct NotificationScheduler {
         }
 
         let overdueTasks = tasks.filter {
-            $0.status == .pending && $0.scheduledDate < today
+            TaskDeadlineService.isOverdue($0, now: now, calendar: calendar)
         }
         if !overdueTasks.isEmpty {
             try await client.add(

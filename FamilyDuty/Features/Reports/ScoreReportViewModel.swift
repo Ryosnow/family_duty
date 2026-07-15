@@ -37,14 +37,22 @@ enum ScoreReportViewModel {
                 recordsWithoutTask.append(record)
                 continue
             }
-            if let existing = latestByTaskID[taskID], existing.completedAt >= record.completedAt {
-                continue
+            if let existing = latestByTaskID[taskID] {
+                if existing.completedAt > record.completedAt {
+                    continue
+                }
+                if existing.completedAt == record.completedAt && existing.id.uuidString >= record.id.uuidString {
+                    continue
+                }
             }
             latestByTaskID[taskID] = record
         }
 
         return (Array(latestByTaskID.values) + recordsWithoutTask)
-            .sorted { $0.completedAt < $1.completedAt }
+            .sorted {
+                if $0.completedAt != $1.completedAt { return $0.completedAt < $1.completedAt }
+                return $0.id.uuidString < $1.id.uuidString
+            }
     }
 
     static func summaries(
@@ -58,7 +66,7 @@ enum ScoreReportViewModel {
             result[.member(member.id)] = Accumulator(memberID: member.id, memberName: member.name, sortOrder: member.sortOrder)
         }
 
-        for record in latestRecords(from: records) where interval?.contains(record.workDate) == true {
+        for record in latestRecords(from: records) where contains(record.workDate, in: interval) {
             let key = key(for: record)
             if accumulators[key] == nil {
                 accumulators[key] = Accumulator(memberID: record.completedBy?.id, memberName: displayName(for: record), sortOrder: Int.max)
@@ -83,7 +91,7 @@ enum ScoreReportViewModel {
         let interval = period.dateInterval(calendar: calendar)
         var accumulators: [DataPointKey: Accumulator] = [:]
 
-        for record in latestRecords(from: records) where interval?.contains(record.workDate) == true {
+        for record in latestRecords(from: records) where contains(record.workDate, in: interval) {
             let date = calendar.startOfDay(for: record.workDate)
             let key = DataPointKey(date: date, workloadKey: key(for: record))
             if accumulators[key] == nil {
@@ -105,6 +113,11 @@ enum ScoreReportViewModel {
 
     private static func displayName(for record: CompletionRecord) -> String {
         record.completedBy?.name ?? record.completedByName ?? "未知成员"
+    }
+
+    private static func contains(_ date: Date, in interval: DateInterval?) -> Bool {
+        guard let interval else { return false }
+        return date >= interval.start && date < interval.end
     }
 
     private static func key(for record: CompletionRecord) -> WorkloadKey {

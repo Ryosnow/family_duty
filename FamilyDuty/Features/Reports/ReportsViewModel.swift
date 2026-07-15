@@ -27,10 +27,12 @@ enum ReportKind: String, CaseIterable, Identifiable {
 struct ReportsViewModel: Equatable {
     private(set) var period: ReportPeriod
     let calendar: Calendar
+    private var selectionAnchorDate: Date
 
     init(initialPeriod: ReportPeriod = .day(.now), calendar: Calendar = .current) {
         self.period = initialPeriod
         self.calendar = calendar
+        self.selectionAnchorDate = initialPeriod.anchorDate
     }
 
     var reportKind: ReportKind {
@@ -42,7 +44,7 @@ struct ReportsViewModel: Equatable {
             }
         }
         set {
-            period = newValue.period(for: period.anchorDate)
+            period = newValue.period(for: selectionAnchorDate)
         }
     }
 
@@ -78,6 +80,7 @@ struct ReportsViewModel: Equatable {
     }
 
     mutating func setAnchorDate(_ date: Date) {
+        selectionAnchorDate = date
         period = reportKind.period(for: date)
     }
 }

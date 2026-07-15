@@ -10,7 +10,7 @@ final class ChoreRule {
     var isEnabled: Bool
     var score: Int = 1
     var participantOrder: [UUID]
-    @Relationship var participants: [FamilyMember]
+    @Relationship(deleteRule: .deny) var participants: [FamilyMember]
 
     var orderedParticipants: [FamilyMember] {
         let membersByID = Dictionary(uniqueKeysWithValues: participants.map { ($0.id, $0) })

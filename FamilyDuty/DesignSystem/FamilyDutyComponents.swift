@@ -109,7 +109,7 @@ struct FamilyDutyMemberChip: View {
             Text(name)
                 .font(.subheadline.weight(.medium))
                 .foregroundStyle(FamilyDutyTheme.ink)
-                .lineLimit(1)
+                .fixedSize(horizontal: false, vertical: true)
         }
         .frame(minHeight: FamilyDutyTheme.minimumHitSize, alignment: .leading)
     }

@@ -4,11 +4,13 @@ import SwiftData
 enum TemporaryTaskValidationError: Error, Equatable, LocalizedError {
     case missingTitle
     case alreadyAssigned
+    case taskNotPending
 
     var errorDescription: String? {
         switch self {
         case .missingTitle: "请输入任务名称"
         case .alreadyAssigned: "这项任务已经有人负责"
+        case .taskNotPending: "只有待处理任务可以领取"
         }
     }
 }
@@ -17,10 +19,16 @@ enum TemporaryTaskValidationError: Error, Equatable, LocalizedError {
 struct TemporaryTaskViewModel {
     let context: ModelContext
     var calendar: Calendar
+    private let saver: (ModelContext) throws -> Void
 
-    init(context: ModelContext, calendar: Calendar = .current) {
+    init(
+        context: ModelContext,
+        calendar: Calendar = .current,
+        saver: @escaping (ModelContext) throws -> Void = { try $0.save() }
+    ) {
         self.context = context
         self.calendar = calendar
+        self.saver = saver
     }
 
     @discardableResult
@@ -39,13 +47,26 @@ struct TemporaryTaskViewModel {
             isTemporary: true
         )
         context.insert(task)
-        try context.save()
+        do {
+            try saver(context)
+        } catch {
+            context.rollback()
+            throw error
+        }
         return task
     }
 
     func claim(_ task: ChoreTask, by member: FamilyMember) throws {
+        guard task.status == .pending else { throw TemporaryTaskValidationError.taskNotPending }
         guard task.assignee == nil else { throw TemporaryTaskValidationError.alreadyAssigned }
+        let previousAssignee = task.assignee
         task.assignee = member
-        try context.save()
+        do {
+            try saver(context)
+        } catch {
+            context.rollback()
+            task.assignee = previousAssignee
+            throw error
+        }
     }
 }

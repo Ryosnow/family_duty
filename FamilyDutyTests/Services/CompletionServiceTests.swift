@@ -52,4 +52,20 @@ final class CompletionServiceTests: XCTestCase {
         XCTAssertEqual(task.status, .pending)
         XCTAssertTrue(try context.fetch(FetchDescriptor<CompletionRecord>()).isEmpty)
     }
+
+    func testCompleteRejectsCancelledTaskWithoutCreatingRecord() throws {
+        let container = try ModelContainerFactory.makeInMemoryContainer()
+        let context = container.mainContext
+        let member = FamilyMember(name: "小明", sortOrder: 0)
+        let task = ChoreTask(title: "取消的任务", scheduledDate: .now, assignee: member, status: .cancelled)
+        context.insert(member)
+        context.insert(task)
+        try context.save()
+
+        XCTAssertThrowsError(try CompletionService(context: context).complete(task, by: member)) { error in
+            XCTAssertEqual(error as? CompletionError, .taskNotPending)
+        }
+        XCTAssertEqual(task.status, .cancelled)
+        XCTAssertTrue(try context.fetch(FetchDescriptor<CompletionRecord>()).isEmpty)
+    }
 }

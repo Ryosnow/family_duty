@@ -52,6 +52,11 @@ struct MemberDeletionService {
         let blockers = try blockers(for: member)
         guard blockers.isEmpty else { throw MemberDeletionError.blocked(blockers) }
         context.delete(member)
-        try context.save()
+        do {
+            try context.save()
+        } catch {
+            context.rollback()
+            throw error
+        }
     }
 }

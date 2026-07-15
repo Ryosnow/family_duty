@@ -11,8 +11,8 @@ final class ChoreTask {
     var isTemporary: Bool
     var statusRaw: String
     var adjustmentNote: String?
-    var assignee: FamilyMember?
-    var rule: ChoreRule?
+    @Relationship(deleteRule: .nullify) var assignee: FamilyMember?
+    @Relationship(deleteRule: .nullify) var rule: ChoreRule?
 
     var status: TaskStatus {
         get { TaskStatus(rawValue: statusRaw) ?? .pending }

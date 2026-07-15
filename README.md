@@ -12,7 +12,7 @@
 ## 生成并打开工程
 
 ```bash
-cd /Users/rumor/Documents/Codex/2026-07-14/b
+cd /Users/rumor/Desktop/mine/family_duty
 xcodegen generate
 open FamilyDuty.xcodeproj
 ```

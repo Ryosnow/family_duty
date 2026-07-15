@@ -312,4 +312,88 @@ final class RotationViewModelTests: XCTestCase {
         XCTAssertEqual(task.scheduledDate, scheduledDate)
         XCTAssertNil(task.deadline)
     }
+
+    func testAdjustSaveFailureRestoresTaskState() throws {
+        let container = try ModelContainerFactory.makeInMemoryContainer()
+        let context = container.mainContext
+        let calendar = Calendar(identifier: .iso8601)
+        let firstDate = calendar.startOfDay(for: .now)
+        let secondDate = calendar.date(byAdding: .day, value: 1, to: firstDate)!
+        let first = FamilyMember(name: "小明", sortOrder: 0)
+        let second = FamilyMember(name: "小红", sortOrder: 1)
+        let task = ChoreTask(title: "扫地", scheduledDate: firstDate, assignee: first)
+        context.insert(first)
+        context.insert(second)
+        context.insert(task)
+        try context.save()
+
+        let viewModel = RotationViewModel(
+            context: context,
+            calendar: calendar,
+            saver: { _ in throw TestSaveError.failed }
+        )
+
+        XCTAssertThrowsError(
+            try viewModel.adjust(
+                task,
+                assignee: second,
+                scheduledDate: secondDate,
+                deadline: secondDate,
+                score: 3,
+                cancellationReason: nil
+            )
+        )
+
+        XCTAssertEqual(task.assignee?.id, first.id)
+        XCTAssertEqual(task.scheduledDate, firstDate)
+        XCTAssertNil(task.deadline)
+        XCTAssertEqual(task.score, 1)
+        XCTAssertEqual(task.status, .pending)
+    }
+
+    func testSaveRuleFailureRestoresExistingRuleAndGeneratedTasks() throws {
+        let container = try ModelContainerFactory.makeInMemoryContainer()
+        let context = container.mainContext
+        let calendar = Calendar(identifier: .iso8601)
+        let today = calendar.startOfDay(for: .now)
+        let member = FamilyMember(name: "小明", sortOrder: 0)
+        let rule = ChoreRule(
+            title: "原任务",
+            weekday: calendar.component(.weekday, from: today),
+            startOfRotationWeek: today,
+            participants: [member]
+        )
+        let task = ChoreTask(title: "原任务", scheduledDate: today, assignee: member, rule: rule)
+        context.insert(member)
+        context.insert(rule)
+        context.insert(task)
+        try context.save()
+
+        let viewModel = RotationViewModel(
+            context: context,
+            calendar: calendar,
+            now: today,
+            saver: { _ in throw TestSaveError.failed }
+        )
+
+        XCTAssertThrowsError(
+            try viewModel.saveRule(
+                existingRule: rule,
+                title: "新任务",
+                weekday: rule.weekday,
+                startOfRotationWeek: today,
+                participants: [member],
+                isEnabled: true,
+                generateThrough: today
+            )
+        )
+
+        XCTAssertEqual(rule.title, "原任务")
+        XCTAssertEqual(try context.fetch(FetchDescriptor<ChoreTask>()).count, 1)
+        XCTAssertEqual(try context.fetch(FetchDescriptor<ChoreTask>()).first?.title, "原任务")
+    }
+
+    private enum TestSaveError: Error {
+        case failed
+    }
 }

@@ -11,7 +11,7 @@ final class TaskBoardFlowUITests: XCTestCase {
         taskBoardTab.tap()
 
         XCTAssertTrue(app.staticTexts["任务面板"].waitForExistence(timeout: 3))
-        XCTAssertTrue(app.buttons["task-board-task-面板待处理"].exists)
+        XCTAssertTrue(app.buttons.matching(NSPredicate(format: "identifier BEGINSWITH 'task-board-task-' AND label CONTAINS '面板待处理'" )).firstMatch.exists)
         XCTAssertTrue(app.staticTexts["面板已完成"].exists)
         XCTAssertTrue(app.staticTexts["面板已取消"].exists)
         XCTAssertTrue(app.staticTexts["待处理"].exists)
@@ -26,7 +26,7 @@ final class TaskBoardFlowUITests: XCTestCase {
         app.launch()
 
         app.buttons["任务面板"].tap()
-        let task = app.buttons["task-board-task-面板待处理"]
+        let task = app.buttons.matching(NSPredicate(format: "identifier BEGINSWITH 'task-board-task-' AND label CONTAINS '面板待处理'" )).firstMatch
         XCTAssertTrue(task.waitForExistence(timeout: 3))
         task.tap()
 

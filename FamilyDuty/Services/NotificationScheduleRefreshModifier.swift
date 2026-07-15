@@ -6,6 +6,7 @@ private struct NotificationScheduleRefreshModifier: ViewModifier {
     @AppStorage("notifications.enabled") private var isEnabled = false
     @AppStorage("notifications.dailyHour") private var dailyHour = 8
     @AppStorage("notifications.overdueHour") private var overdueHour = 19
+    @State private var errorMessage: String?
 
     private var taskSignature: String {
         tasks
@@ -15,6 +16,7 @@ private struct NotificationScheduleRefreshModifier: ViewModifier {
                     $0.title,
                     $0.statusRaw,
                     String($0.scheduledDate.timeIntervalSinceReferenceDate),
+                    String($0.deadline?.timeIntervalSinceReferenceDate ?? 0),
                     $0.assignee?.id.uuidString ?? "unassigned"
                 ].joined(separator: "|")
             }
@@ -27,20 +29,31 @@ private struct NotificationScheduleRefreshModifier: ViewModifier {
     }
 
     func body(content: Content) -> some View {
-        content.onChange(of: refreshSignature, initial: true) { _, _ in
-            Task { await refresh() }
-        }
+        content
+            .task(id: refreshSignature) { await refresh() }
+            .alert("无法更新提醒", isPresented: Binding(
+                get: { errorMessage != nil },
+                set: { if !$0 { errorMessage = nil } }
+            )) {
+                Button("好", role: .cancel) {}
+            } message: {
+                Text(errorMessage ?? "未知错误")
+            }
     }
 
     private func refresh() async {
-        try? await NotificationScheduler().refreshSchedule(
-            for: tasks,
-            settings: NotificationSettings(
-                isEnabled: isEnabled,
-                dailySummaryHour: dailyHour,
-                overdueHour: overdueHour
+        do {
+            try await NotificationScheduler().refreshSchedule(
+                for: tasks,
+                settings: NotificationSettings(
+                    isEnabled: isEnabled,
+                    dailySummaryHour: dailyHour,
+                    overdueHour: overdueHour
+                )
             )
-        )
+        } catch {
+            errorMessage = error.localizedDescription
+        }
     }
 }
 

@@ -11,8 +11,8 @@ final class ScoreReportViewModelTests: XCTestCase {
         let firstTask = ChoreTask(title: "扫地", scheduledDate: day, score: 3, status: .completed)
         let secondDay = calendar.date(byAdding: .day, value: 1, to: day)!
         let otherTask = ChoreTask(title: "洗碗", scheduledDate: secondDay, score: 2, status: .completed)
-        let record = CompletionRecord(task: firstTask, completedBy: first)
-        let otherRecord = CompletionRecord(task: otherTask, completedBy: second)
+        let record = CompletionRecord(task: firstTask, completedBy: first, calendar: calendar)
+        let otherRecord = CompletionRecord(task: otherTask, completedBy: second, calendar: calendar)
 
         let summaries = ScoreReportViewModel.summaries(
             for: .day(day),
@@ -32,8 +32,8 @@ final class ScoreReportViewModelTests: XCTestCase {
         let member = FamilyMember(name: "小明", sortOrder: 0)
         let firstTask = ChoreTask(title: "扫地", scheduledDate: week, score: 3, status: .completed)
         let secondTask = ChoreTask(title: "拖地", scheduledDate: week, score: 2, status: .completed)
-        let firstRecord = CompletionRecord(task: firstTask, completedBy: member)
-        let secondRecord = CompletionRecord(task: secondTask, completedBy: member)
+        let firstRecord = CompletionRecord(task: firstTask, completedBy: member, calendar: calendar)
+        let secondRecord = CompletionRecord(task: secondTask, completedBy: member, calendar: calendar)
 
         let points = ScoreReportViewModel.dailyDataPoints(
             for: .week(week),
@@ -64,6 +64,28 @@ final class ScoreReportViewModelTests: XCTestCase {
 
         XCTAssertEqual(latest.count, 1)
         XCTAssertEqual(latest.first?.id, newer.id)
+    }
+
+    func testDuplicateCompletionRecordsAtSameTimeUseStableIDTieBreaker() throws {
+        let member = FamilyMember(name: "小明", sortOrder: 0)
+        let task = ChoreTask(title: "扫地", scheduledDate: .now, status: .completed)
+        let completedAt = Date(timeIntervalSinceReferenceDate: 100)
+        let first = CompletionRecord(
+            id: UUID(uuidString: "00000000-0000-0000-0000-000000000001")!,
+            task: task,
+            completedBy: member,
+            completedAt: completedAt
+        )
+        let second = CompletionRecord(
+            id: UUID(uuidString: "00000000-0000-0000-0000-000000000002")!,
+            task: task,
+            completedBy: member,
+            completedAt: completedAt
+        )
+
+        let latest = ScoreReportViewModel.latestRecords(from: [first, second])
+
+        XCTAssertEqual(latest.map(\.id), [second.id])
     }
 
     func testPeriodDateIntervalUsesCalendarMonthBoundary() throws {

@@ -8,8 +8,8 @@ final class CompletionRecord {
     var workDate: Date = Foundation.Date.now
     var score: Int = 1
     var completedByName: String?
-    var task: ChoreTask?
-    var completedBy: FamilyMember?
+    @Relationship(deleteRule: .nullify) var task: ChoreTask?
+    @Relationship(deleteRule: .nullify) var completedBy: FamilyMember?
 
     init(id: UUID = UUID(), task: ChoreTask, completedBy: FamilyMember, completedAt: Date = .now, calendar: Calendar = .current) {
         self.id = id

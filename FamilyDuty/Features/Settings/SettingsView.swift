@@ -7,6 +7,7 @@ struct SettingsView: View {
     @State private var editingMember: FamilyMember?
     @State private var isAddingMember = false
     @State private var deletionMessage: String?
+    @State private var saveErrorMessage: String?
 
     var body: some View {
         NavigationStack {
@@ -42,6 +43,14 @@ struct SettingsView: View {
             } message: {
                 Text(deletionMessage ?? "")
             }
+            .alert("无法保存", isPresented: Binding(
+                get: { saveErrorMessage != nil },
+                set: { if !$0 { saveErrorMessage = nil } }
+            )) {
+                Button("好", role: .cancel) {}
+            } message: {
+                Text(saveErrorMessage ?? "未知错误")
+            }
         }
     }
 
@@ -49,7 +58,12 @@ struct SettingsView: View {
         var reordered = members
         reordered.move(fromOffsets: offsets, toOffset: destination)
         for (index, member) in reordered.enumerated() { member.sortOrder = index }
-        try? context.save()
+        do {
+            try context.save()
+        } catch {
+            context.rollback()
+            saveErrorMessage = error.localizedDescription
+        }
     }
 
     private func delete(_ member: FamilyMember) {

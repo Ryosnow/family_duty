@@ -10,6 +10,7 @@ struct NotificationSettingsView: View {
     @AppStorage("notifications.overdueHour") private var overdueHour = 19
     @State private var authorizationStatus: UNAuthorizationStatus = .notDetermined
     @State private var errorMessage: String?
+    @State private var refreshID = UUID()
 
     var body: some View {
         Form {
@@ -30,15 +31,18 @@ struct NotificationSettingsView: View {
                 Section("通知权限") {
                     Text(permissionMessage)
                     Button("打开系统设置") {
-                        UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!)
+                        if let url = URL(string: UIApplication.openSettingsURLString) {
+                            UIApplication.shared.open(url)
+                        }
                     }
                 }
             }
         }
         .navigationTitle("通知设置")
         .task { authorizationStatus = await NotificationAuthorizationService().status() }
-        .onChange(of: dailyHour) { _, _ in Task { await refresh() } }
-        .onChange(of: overdueHour) { _, _ in Task { await refresh() } }
+        .task(id: refreshID) { await refresh() }
+        .onChange(of: dailyHour) { _, _ in refreshID = UUID() }
+        .onChange(of: overdueHour) { _, _ in refreshID = UUID() }
         .alert("无法更新提醒", isPresented: Binding(
             get: { errorMessage != nil },
             set: { if !$0 { errorMessage = nil } }
@@ -50,15 +54,27 @@ struct NotificationSettingsView: View {
     }
 
     private func enabledChanged(_ enabled: Bool) async {
-        if enabled && authorizationStatus == .notDetermined {
-            do {
+        guard enabled else {
+            refreshID = UUID()
+            return
+        }
+
+        do {
+            if authorizationStatus == .notDetermined {
                 _ = try await NotificationAuthorizationService().requestAuthorization()
                 authorizationStatus = await NotificationAuthorizationService().status()
-            } catch {
-                errorMessage = error.localizedDescription
             }
+            guard authorizationStatus == .authorized || authorizationStatus == .provisional else {
+                isEnabled = false
+                errorMessage = "系统通知权限未开启，请在系统设置中允许通知。"
+                return
+            }
+        } catch {
+            isEnabled = false
+            errorMessage = error.localizedDescription
+            return
         }
-        await refresh()
+        refreshID = UUID()
     }
 
     private func refresh() async {

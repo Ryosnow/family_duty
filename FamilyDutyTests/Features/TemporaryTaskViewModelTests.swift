@@ -144,4 +144,51 @@ final class TemporaryTaskViewModelTests: XCTestCase {
         }
         XCTAssertEqual(task.assignee?.id, first.id)
     }
+
+    func testClaimRejectsCompletedTask() throws {
+        let container = try ModelContainerFactory.makeInMemoryContainer()
+        let context = container.mainContext
+        let member = FamilyMember(name: "小明", sortOrder: 0)
+        let task = ChoreTask(title: "已完成", scheduledDate: .now, status: .completed)
+        context.insert(member)
+        context.insert(task)
+
+        XCTAssertThrowsError(try TemporaryTaskViewModel(context: context).claim(task, by: member)) { error in
+            XCTAssertEqual(error as? TemporaryTaskValidationError, .taskNotPending)
+        }
+        XCTAssertNil(task.assignee)
+    }
+
+    func testCreateTaskSaveFailureDoesNotLeaveInsertedTask() throws {
+        let container = try ModelContainerFactory.makeInMemoryContainer()
+        let viewModel = TemporaryTaskViewModel(
+            context: container.mainContext,
+            saver: { _ in throw TestSaveError.failed }
+        )
+
+        XCTAssertThrowsError(try viewModel.createTask(title: "擦桌子", scheduledDate: .now, assignee: nil))
+        XCTAssertTrue(try container.mainContext.fetch(FetchDescriptor<ChoreTask>()).isEmpty)
+    }
+
+    func testClaimSaveFailureRestoresUnassignedTask() throws {
+        let container = try ModelContainerFactory.makeInMemoryContainer()
+        let context = container.mainContext
+        let member = FamilyMember(name: "小明", sortOrder: 0)
+        let task = ChoreTask(title: "擦桌子", scheduledDate: .now)
+        context.insert(member)
+        context.insert(task)
+        try context.save()
+
+        let viewModel = TemporaryTaskViewModel(
+            context: context,
+            saver: { _ in throw TestSaveError.failed }
+        )
+
+        XCTAssertThrowsError(try viewModel.claim(task, by: member))
+        XCTAssertNil(task.assignee)
+    }
+
+    private enum TestSaveError: Error {
+        case failed
+    }
 }

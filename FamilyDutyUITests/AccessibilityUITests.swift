@@ -17,10 +17,10 @@ final class AccessibilityUITests: XCTestCase {
         XCUIDevice.shared.orientation = .landscapeLeft
         app.launch()
 
-        let task = app.buttons["dashboard-task-扫地"]
+        let task = app.buttons.matching(NSPredicate(format: "identifier BEGINSWITH 'dashboard-task-' AND label CONTAINS '扫地'" )).firstMatch
         XCTAssertTrue(task.waitForExistence(timeout: 4))
         XCTAssertTrue(task.isHittable)
-        XCTAssertTrue(app.buttons["dashboard-add-temporary"].exists)
+        XCTAssertTrue(app.buttons["dashboard-add-temporary-toolbar"].exists)
 
         XCUIDevice.shared.orientation = .portrait
         XCTAssertTrue(task.waitForExistence(timeout: 3))
@@ -37,6 +37,6 @@ final class AccessibilityUITests: XCTestCase {
 
         XCTAssertTrue(app.staticTexts["今天没有待办"].waitForExistence(timeout: 3))
         XCTAssertTrue(app.staticTexts["还没有完成记录"].exists)
-        XCTAssertTrue(app.buttons["dashboard-add-temporary"].exists)
+        XCTAssertTrue(app.buttons["dashboard-add-temporary-toolbar"].exists)
     }
 }

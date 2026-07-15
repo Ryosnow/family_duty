@@ -43,7 +43,7 @@ struct WorkloadSummaryView: View {
                         Text(summary.memberName)
                             .font(.subheadline.weight(.medium))
                             .foregroundStyle(FamilyDutyTheme.ink)
-                            .lineLimit(1)
+                            .fixedSize(horizontal: false, vertical: true)
                         Spacer(minLength: 8)
                         Text("完成 \(summary.completedCount) 项")
                             .font(.caption)

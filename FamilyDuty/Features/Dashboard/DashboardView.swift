@@ -8,7 +8,6 @@ struct DashboardView: View {
     @State private var adjusting: ChoreTask?
     @State private var claiming: ChoreTask?
     @State private var isAddingTemporaryTask = false
-    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     private var todayPendingTasks: [ChoreTask] {
         DashboardViewModel.todayTasks(from: tasks)
@@ -77,8 +76,8 @@ struct DashboardView: View {
             .navigationTitle("家庭值日")
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
-                    Button("新增临时任务", systemImage: "plus") { isAddingTemporaryTask = true }
-                        .accessibilityIdentifier("dashboard-add-temporary")
+                Button("新增临时任务", systemImage: "plus") { isAddingTemporaryTask = true }
+                        .accessibilityIdentifier("dashboard-add-temporary-toolbar")
                 }
             }
             .sheet(item: $completing) { task in CompletionSheet(task: task) }
@@ -128,7 +127,6 @@ struct DashboardView: View {
         }
         .clipShape(RoundedRectangle(cornerRadius: 26, style: .continuous))
         .accessibilityIdentifier("dashboard-progress-card")
-        .scaleEffect(reduceMotion ? 1 : 1)
     }
 
     @ViewBuilder
@@ -170,7 +168,7 @@ struct DashboardView: View {
                     .buttonStyle(.plain)
                     .accessibilityLabel(DashboardViewModel.accessibilityLabel(for: task))
                     .accessibilityHint(task.assignee == nil ? "打开领取页面" : "打开完成确认")
-                    .accessibilityIdentifier("dashboard-task-\(task.title)")
+                    .accessibilityIdentifier("dashboard-task-\(task.id.uuidString)")
                     .swipeActions {
                         Button("调整") { adjusting = task }
                             .tint(FamilyDutyTheme.sunflower)
@@ -208,7 +206,7 @@ struct DashboardView: View {
                     }
                     .padding(FamilyDutyTheme.cardPadding)
                     .familyDutyCard(cornerRadius: FamilyDutyTheme.compactCornerRadius)
-                    .accessibilityIdentifier("history-\(record.task?.title ?? "值日")-by-\(completedByName)")
+                    .accessibilityIdentifier("history-\(record.id.uuidString)")
                 }
             }
         }

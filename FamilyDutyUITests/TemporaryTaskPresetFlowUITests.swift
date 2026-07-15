@@ -6,7 +6,7 @@ final class TemporaryTaskPresetFlowUITests: XCTestCase {
         app.launchArguments = ["-uiTesting", "-seedMember"]
         app.launch()
 
-        app.buttons["dashboard-add-temporary"].tap()
+        app.buttons["dashboard-add-temporary-toolbar"].tap()
 
         let picker = app.descendants(matching: .any)["temporary-task-preset-picker"]
         XCTAssertTrue(picker.waitForExistence(timeout: 3))

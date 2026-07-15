@@ -52,7 +52,11 @@ struct AppRootView: View {
             context.insert(CompletionRecord(task: completedTask, completedBy: member, completedAt: .now))
             context.insert(CompletionRecord(task: secondCompletedTask, completedBy: secondMember, completedAt: .now))
         }
-        try? context.save()
+        do {
+            try context.save()
+        } catch {
+            assertionFailure("无法保存 UI 测试种子数据：\(error.localizedDescription)")
+        }
     }
 }
 

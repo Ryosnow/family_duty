@@ -6,7 +6,7 @@ final class DashboardFlowUITests: XCTestCase {
         app.launchArguments = ["-uiTesting", "-seedDashboardTask"]
         app.launch()
 
-        let task = app.buttons["dashboard-task-扫地"]
+        let task = app.buttons.matching(NSPredicate(format: "identifier BEGINSWITH 'dashboard-task-' AND label CONTAINS '扫地'" )).firstMatch
         XCTAssertTrue(task.waitForExistence(timeout: 3))
         task.tap()
 
@@ -15,7 +15,7 @@ final class DashboardFlowUITests: XCTestCase {
         completeButton.tap()
 
         XCTAssertFalse(task.waitForExistence(timeout: 1))
-        XCTAssertTrue(app.staticTexts["history-扫地-by-小明"].waitForExistence(timeout: 2))
+        XCTAssertTrue(app.staticTexts.matching(NSPredicate(format: "identifier BEGINSWITH 'history-' AND label CONTAINS '小明'" )).firstMatch.waitForExistence(timeout: 2))
     }
 
     func testOverdueTaskAppearsInOverdueSectionWithIndicator() {
@@ -24,7 +24,7 @@ final class DashboardFlowUITests: XCTestCase {
         app.launch()
 
         XCTAssertTrue(app.staticTexts["已逾期"].waitForExistence(timeout: 3))
-        let task = app.buttons["dashboard-task-逾期任务"]
+        let task = app.buttons.matching(NSPredicate(format: "identifier BEGINSWITH 'dashboard-task-' AND label CONTAINS '逾期任务'" )).firstMatch
         XCTAssertTrue(task.waitForExistence(timeout: 2))
         XCTAssertTrue(task.label.contains("已逾期"))
     }
