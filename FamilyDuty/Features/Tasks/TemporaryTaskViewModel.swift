@@ -24,14 +24,16 @@ struct TemporaryTaskViewModel {
     }
 
     @discardableResult
-    func createTask(title: String, scheduledDate: Date, deadline: Date? = nil, assignee: FamilyMember?) throws -> ChoreTask {
+    func createTask(title: String, scheduledDate: Date, deadline: Date? = nil, score: Int = 1, assignee: FamilyMember?) throws -> ChoreTask {
         let trimmedTitle = title.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmedTitle.isEmpty else { throw TemporaryTaskValidationError.missingTitle }
+        try ScoreValidationService.validate(score: score)
         try TaskDeadlineService.validate(deadline: deadline, scheduledDate: scheduledDate, calendar: calendar)
         let task = ChoreTask(
             title: trimmedTitle,
             scheduledDate: scheduledDate,
             deadline: TaskDeadlineService.normalized(deadline: deadline, calendar: calendar),
+            score: score,
             assignee: assignee,
             rule: nil,
             isTemporary: true

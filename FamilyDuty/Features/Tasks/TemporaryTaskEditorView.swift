@@ -9,6 +9,7 @@ struct TemporaryTaskEditorView: View {
     @State private var scheduledDate = Date.now
     @State private var hasDeadline = false
     @State private var deadline = Date.now
+    @State private var scoreText = "1"
     @State private var assigneeID: UUID?
     @State private var errorMessage: String?
 
@@ -17,6 +18,8 @@ struct TemporaryTaskEditorView: View {
             Form {
                 TextField("任务名称", text: $title)
                 DatePicker("日期", selection: $scheduledDate, displayedComponents: .date)
+                TextField("得分", text: $scoreText)
+                    .keyboardType(.numberPad)
                 Toggle("设置 Deadline", isOn: $hasDeadline)
                 if hasDeadline {
                     DatePicker("最晚日期", selection: $deadline, displayedComponents: .date)
@@ -55,6 +58,7 @@ struct TemporaryTaskEditorView: View {
                 title: title,
                 scheduledDate: scheduledDate,
                 deadline: hasDeadline ? deadline : nil,
+                score: Int(scoreText) ?? 0,
                 assignee: members.first { $0.id == assigneeID }
             )
             dismiss()

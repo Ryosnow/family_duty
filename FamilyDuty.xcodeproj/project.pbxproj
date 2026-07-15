@@ -19,6 +19,7 @@
 		219785818B9A6CE3FC06F9C1 /* RotationViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C78F7BFE7D37555B719C8376 /* RotationViewModel.swift */; };
 		2395C870E1555F7ECBDEB7C1 /* CalendarProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = C89827E00A42D1DF69F75C6E /* CalendarProvider.swift */; };
 		26CA12B008AF45A03EF83BB4 /* TaskBoardFlowUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF77E04AEFFF2898E13DF019 /* TaskBoardFlowUITests.swift */; };
+		28A0F2A45478E61A5EE926AD /* ScoreReportViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25691FEEF0AF8A550F21A32D /* ScoreReportViewModel.swift */; };
 		28F7AB7210BE5A7FE5F6B47F /* FamilyDutyApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0FA820013B78B94A598A58D /* FamilyDutyApp.swift */; };
 		2C41DD55E4AC9F5694A77320 /* AccessibilityUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C74897A10254CD0A512E9026 /* AccessibilityUITests.swift */; };
 		2DC798909D85106C4ED22223 /* ClaimTaskSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10480315C74FEE8E1C81D77C /* ClaimTaskSheet.swift */; };
@@ -33,8 +34,11 @@
 		50CF2409A01B36BE74A01AEA /* DashboardFlowUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14B3319E1797AC922AFFEDDA /* DashboardFlowUITests.swift */; };
 		5640A7F92B9FBC80C3CCEAAB /* NotificationSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6FABB2FEAFFE778A737CB5F /* NotificationSettingsView.swift */; };
 		5C1FF7C8B47B0D4D62E5E484 /* NotificationScheduleRefreshModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFCA4B8B97596CF8B9B975AA /* NotificationScheduleRefreshModifier.swift */; };
+		5ED09C32CFFEF98A2F805A7F /* ReportPeriod.swift in Sources */ = {isa = PBXBuildFile; fileRef = 123EDA92294AC4999A4F88A7 /* ReportPeriod.swift */; };
 		64512D42936DCEA96C281A50 /* NotificationScheduler.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEC955A175A59AFA455C6327 /* NotificationScheduler.swift */; };
 		652CBCBEDE75268EF9CDE80A /* TemporaryTaskEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79E641AFE178550CEC0FDD59 /* TemporaryTaskEditorView.swift */; };
+		670B6513170BF24D475E4CD6 /* ScoreReportViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25CB4C89DFD5B21DA30E8B94 /* ScoreReportViewModelTests.swift */; };
+		670F25B903114A86F6F31585 /* ScoreValidationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1FA62774F9D9E7D081CC0E2 /* ScoreValidationService.swift */; };
 		6E69552710D5213905A71916 /* ChoreTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = B863A390EE10E85CF9EA797D /* ChoreTask.swift */; };
 		6FFA6DF448D37038B4DE3580 /* TaskBoardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CCDEDB32C3148FA529CC55E /* TaskBoardView.swift */; };
 		769A32FDCDCB02090F865165 /* CompletionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D95BE792C7E497DBE4A6404 /* CompletionService.swift */; };
@@ -81,6 +85,7 @@
 /* Begin PBXFileReference section */
 		0992F3119BEF39C0E9E9B9E9 /* DashboardViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardViewModel.swift; sourceTree = "<group>"; };
 		10480315C74FEE8E1C81D77C /* ClaimTaskSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClaimTaskSheet.swift; sourceTree = "<group>"; };
+		123EDA92294AC4999A4F88A7 /* ReportPeriod.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReportPeriod.swift; sourceTree = "<group>"; };
 		12EFE16C5A4EFD0375AF9F27 /* TaskGenerationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskGenerationService.swift; sourceTree = "<group>"; };
 		14B3319E1797AC922AFFEDDA /* DashboardFlowUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardFlowUITests.swift; sourceTree = "<group>"; };
 		1784C0FA31F9130F50430D89 /* RotationViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RotationViewModelTests.swift; sourceTree = "<group>"; };
@@ -90,6 +95,8 @@
 		1DBEC84D27703CCC589C7D30 /* FamilyDutyTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = FamilyDutyTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		1E55B334E5CE092C4B0AB255 /* AppLaunchUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLaunchUITests.swift; sourceTree = "<group>"; };
 		1F831775EA646B3715452433 /* NotificationSchedulerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationSchedulerTests.swift; sourceTree = "<group>"; };
+		25691FEEF0AF8A550F21A32D /* ScoreReportViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScoreReportViewModel.swift; sourceTree = "<group>"; };
+		25CB4C89DFD5B21DA30E8B94 /* ScoreReportViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScoreReportViewModelTests.swift; sourceTree = "<group>"; };
 		2714CE6633E5B2533FCD6A4C /* TaskBoardViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskBoardViewModel.swift; sourceTree = "<group>"; };
 		2CCDEDB32C3148FA529CC55E /* TaskBoardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskBoardView.swift; sourceTree = "<group>"; };
 		346C76E6867CBE5A6503C900 /* MemberOrderEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemberOrderEditorView.swift; sourceTree = "<group>"; };
@@ -112,6 +119,7 @@
 		937A62EFD382960B19C87153 /* AppRootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppRootView.swift; sourceTree = "<group>"; };
 		96A21F43A4155EFD8959BB62 /* ModelContainerFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelContainerFactory.swift; sourceTree = "<group>"; };
 		B16FCB93498305EEBB6DF260 /* RotationListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RotationListView.swift; sourceTree = "<group>"; };
+		B1FA62774F9D9E7D081CC0E2 /* ScoreValidationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScoreValidationService.swift; sourceTree = "<group>"; };
 		B8423DC1869AECD21EC3AD54 /* TemporaryTaskViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TemporaryTaskViewModel.swift; sourceTree = "<group>"; };
 		B863A390EE10E85CF9EA797D /* ChoreTask.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChoreTask.swift; sourceTree = "<group>"; };
 		BAFF07FF1DF87796DB2D4557 /* TaskAdjustmentSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskAdjustmentSheet.swift; sourceTree = "<group>"; };
@@ -191,6 +199,7 @@
 				BEC955A175A59AFA455C6327 /* NotificationScheduler.swift */,
 				BFCA4B8B97596CF8B9B975AA /* NotificationScheduleRefreshModifier.swift */,
 				D2C1D28DED8F0EFB4B4490B3 /* RotationScheduler.swift */,
+				B1FA62774F9D9E7D081CC0E2 /* ScoreValidationService.swift */,
 				1D4F876EAE4FD11FD4155B7D /* TaskDeadlineService.swift */,
 				12EFE16C5A4EFD0375AF9F27 /* TaskGenerationService.swift */,
 			);
@@ -232,6 +241,15 @@
 			path = Services;
 			sourceTree = "<group>";
 		};
+		73FB89156438B5FE63FEC7C4 /* Reports */ = {
+			isa = PBXGroup;
+			children = (
+				123EDA92294AC4999A4F88A7 /* ReportPeriod.swift */,
+				25691FEEF0AF8A550F21A32D /* ScoreReportViewModel.swift */,
+			);
+			path = Reports;
+			sourceTree = "<group>";
+		};
 		83492ED4B618B9C8FF6C421F = {
 			isa = PBXGroup;
 			children = (
@@ -257,6 +275,7 @@
 			children = (
 				EB72FBB488CDC53412B2B58E /* DashboardViewModelTests.swift */,
 				1784C0FA31F9130F50430D89 /* RotationViewModelTests.swift */,
+				25CB4C89DFD5B21DA30E8B94 /* ScoreReportViewModelTests.swift */,
 				BB15A8686894BA4424C6C2E0 /* TaskBoardViewModelTests.swift */,
 				53CC9D61F92F057A604B6272 /* TemporaryTaskViewModelTests.swift */,
 			);
@@ -300,6 +319,7 @@
 			isa = PBXGroup;
 			children = (
 				1D2F6DB59B9A0053B2911C56 /* Dashboard */,
+				73FB89156438B5FE63FEC7C4 /* Reports */,
 				D49338E3DE90347CBC309D23 /* Rotation */,
 				884B03A7E801408C40073057 /* Settings */,
 				A0F39DFF4E9644F0642CB760 /* Setup */,
@@ -445,10 +465,13 @@
 				64512D42936DCEA96C281A50 /* NotificationScheduler.swift in Sources */,
 				5640A7F92B9FBC80C3CCEAAB /* NotificationSettingsView.swift in Sources */,
 				771664CE8BDAFB65AA4CE6D7 /* OnboardingView.swift in Sources */,
+				5ED09C32CFFEF98A2F805A7F /* ReportPeriod.swift in Sources */,
 				8B9AB47BA42F09DF02BC9855 /* RotationListView.swift in Sources */,
 				0E5795A045FF557AEDD9400C /* RotationScheduler.swift in Sources */,
 				219785818B9A6CE3FC06F9C1 /* RotationViewModel.swift in Sources */,
 				37BDCCEC024CA2F63782B3A0 /* RuleEditorView.swift in Sources */,
+				28A0F2A45478E61A5EE926AD /* ScoreReportViewModel.swift in Sources */,
+				670F25B903114A86F6F31585 /* ScoreValidationService.swift in Sources */,
 				46184B44D3B89DA8E96BB2DE /* SettingsView.swift in Sources */,
 				C2C4C060156842E1E508F2E3 /* TaskAdjustmentSheet.swift in Sources */,
 				6FFA6DF448D37038B4DE3580 /* TaskBoardView.swift in Sources */,
@@ -474,6 +497,7 @@
 				F83681B71EC411EC8FD48980 /* NotificationSchedulerTests.swift in Sources */,
 				A01EEE988C9B7CD412FE299B /* RotationSchedulerTests.swift in Sources */,
 				C5C49C3CDB0101D1F8F56451 /* RotationViewModelTests.swift in Sources */,
+				670B6513170BF24D475E4CD6 /* ScoreReportViewModelTests.swift in Sources */,
 				C3507B7D81285ED0C15928C1 /* TaskBoardViewModelTests.swift in Sources */,
 				CFAF7C337F15B4AF11FA1DB1 /* TaskDeadlineServiceTests.swift in Sources */,
 				7D3908FC4BEA55ABD5D53DDD /* TaskGenerationServiceTests.swift in Sources */,

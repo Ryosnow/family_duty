@@ -11,6 +11,7 @@ struct TaskAdjustmentSheet: View {
     @State private var scheduledDate = Date.now
     @State private var hasDeadline = false
     @State private var deadline = Date.now
+    @State private var scoreText = "1"
     @State private var isCancelled = false
     @State private var cancellationReason = ""
     @State private var errorMessage: String?
@@ -26,6 +27,9 @@ struct TaskAdjustmentSheet: View {
                     }
                     .disabled(isCancelled)
                     DatePicker("日期", selection: $scheduledDate, displayedComponents: .date)
+                        .disabled(isCancelled)
+                    TextField("得分", text: $scoreText)
+                        .keyboardType(.numberPad)
                         .disabled(isCancelled)
                     Toggle("设置 Deadline", isOn: $hasDeadline)
                         .disabled(isCancelled)
@@ -61,6 +65,7 @@ struct TaskAdjustmentSheet: View {
             .onAppear {
                 memberID = task.assignee?.id
                 scheduledDate = task.scheduledDate
+                scoreText = String(task.score)
                 hasDeadline = task.deadline != nil
                 deadline = task.deadline ?? task.scheduledDate
                 isCancelled = task.status == .cancelled
@@ -82,6 +87,7 @@ struct TaskAdjustmentSheet: View {
                 assignee: member,
                 scheduledDate: scheduledDate,
                 deadline: hasDeadline ? deadline : nil,
+                score: Int(scoreText) ?? 0,
                 cancellationReason: isCancelled ? cancellationReason : nil
             )
             dismiss()

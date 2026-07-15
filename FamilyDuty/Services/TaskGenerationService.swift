@@ -22,7 +22,7 @@ struct TaskGenerationService {
                     task.rule?.id == rule.id && task.scheduledDate == date
                 }
                 if !alreadyExists {
-                    let task = ChoreTask(title: rule.title, scheduledDate: date, assignee: scheduler.assignee(for: rule, weekOf: date, calendar: calendar), rule: rule)
+                    let task = ChoreTask(title: rule.title, scheduledDate: date, score: rule.score, assignee: scheduler.assignee(for: rule, weekOf: date, calendar: calendar), rule: rule)
                     context.insert(task)
                 }
                 date = calendar.date(byAdding: .weekOfYear, value: 1, to: date)!

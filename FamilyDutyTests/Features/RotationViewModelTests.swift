@@ -23,8 +23,50 @@ final class RotationViewModelTests: XCTestCase {
         )
 
         XCTAssertEqual(rule.title, "扫地")
+        XCTAssertEqual(rule.score, 1)
         XCTAssertEqual(try context.fetch(FetchDescriptor<ChoreRule>()).count, 1)
         XCTAssertFalse(try context.fetch(FetchDescriptor<ChoreTask>()).isEmpty)
+    }
+
+    func testSaveRulePersistsConfiguredScoreAndGeneratesTaskSnapshot() throws {
+        let container = try ModelContainerFactory.makeInMemoryContainer()
+        let context = container.mainContext
+        let member = FamilyMember(name: "小明", sortOrder: 0)
+        context.insert(member)
+        let calendar = Calendar.current
+        let viewModel = RotationViewModel(context: context, calendar: calendar)
+
+        let rule = try viewModel.saveRule(
+            title: "擦窗户",
+            weekday: calendar.component(.weekday, from: .now),
+            startOfRotationWeek: .now,
+            participants: [member],
+            isEnabled: true,
+            score: 3,
+            generateThrough: .now
+        )
+
+        XCTAssertEqual(rule.score, 3)
+        XCTAssertEqual(try context.fetch(FetchDescriptor<ChoreTask>()).first?.score, 3)
+    }
+
+    func testSaveRuleRejectsNonPositiveScore() throws {
+        let container = try ModelContainerFactory.makeInMemoryContainer()
+        let member = FamilyMember(name: "小明", sortOrder: 0)
+
+        XCTAssertThrowsError(
+            try RotationViewModel(context: container.mainContext).saveRule(
+                title: "扫地",
+                weekday: 2,
+                startOfRotationWeek: .now,
+                participants: [member],
+                isEnabled: true,
+                score: 0,
+                generateThrough: .now
+            )
+        ) { error in
+            XCTAssertEqual(error as? ScoreValidationError, .invalidScore)
+        }
     }
 
     func testSaveRuleRejectsBlankTitle() throws {
@@ -135,10 +177,12 @@ final class RotationViewModelTests: XCTestCase {
             task,
             assignee: second,
             scheduledDate: start,
+            score: 2,
             cancellationReason: nil
         )
 
         XCTAssertEqual(task.assignee?.id, second.id)
+        XCTAssertEqual(task.score, 2)
         XCTAssertNotNil(task.adjustmentNote)
         let nextWeek = calendar.date(byAdding: .weekOfYear, value: 1, to: start)!
         XCTAssertEqual(RotationScheduler().assignee(for: rule, weekOf: nextWeek, calendar: calendar)?.id, second.id)

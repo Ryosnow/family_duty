@@ -12,6 +12,7 @@ struct RuleEditorView: View {
     @State private var startOfRotationWeek = Date.now
     @State private var participantIDs: [UUID] = []
     @State private var isEnabled = true
+    @State private var scoreText = "1"
     @State private var errorMessage: String?
 
     var body: some View {
@@ -25,6 +26,8 @@ struct RuleEditorView: View {
                         }
                     }
                     DatePicker("轮换起始周", selection: $startOfRotationWeek, displayedComponents: .date)
+                    TextField("得分", text: $scoreText)
+                        .keyboardType(.numberPad)
                     Toggle("启用规则", isOn: $isEnabled)
                 }
 
@@ -73,6 +76,7 @@ struct RuleEditorView: View {
         startOfRotationWeek = rule.startOfRotationWeek
         participantIDs = rule.participantOrder
         isEnabled = rule.isEnabled
+        scoreText = String(rule.score)
     }
 
     private func save() {
@@ -86,6 +90,7 @@ struct RuleEditorView: View {
                 startOfRotationWeek: startOfRotationWeek,
                 participants: participants,
                 isEnabled: isEnabled,
+                score: Int(scoreText) ?? 0,
                 generateThrough: endDate
             )
             dismiss()

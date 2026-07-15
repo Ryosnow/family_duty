@@ -20,7 +20,7 @@ struct TaskBoardView: View {
         NavigationStack {
             List {
                 Section {
-                    Text("今天共 (taskCount) 项任务")
+                    Text("今天共 \(taskCount) 项任务")
                         .font(.subheadline)
                         .foregroundStyle(.secondary)
                 }
@@ -142,7 +142,7 @@ struct TaskBoardView: View {
             Text(task.scheduledDate, format: .dateTime.weekday().month().day())
                 .font(.caption)
                 .foregroundStyle(.secondary)
-            Text("最晚：(TaskDeadlineService.effectiveDeadline(for: task, calendar: .current), format: .dateTime.year().month().day())")
+            Text("最晚：\(TaskDeadlineService.effectiveDeadline(for: task, calendar: .current), format: .dateTime.year().month().day())")
                 .font(.caption)
                 .foregroundStyle(TaskDeadlineService.isOverdue(task, now: .now, calendar: .current) ? .red : .secondary)
         }

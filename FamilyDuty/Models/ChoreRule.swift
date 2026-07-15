@@ -8,6 +8,7 @@ final class ChoreRule {
     var weekday: Int
     var startOfRotationWeek: Date
     var isEnabled: Bool
+    var score: Int = 1
     var participantOrder: [UUID]
     @Relationship var participants: [FamilyMember]
 
@@ -16,7 +17,7 @@ final class ChoreRule {
         return participantOrder.compactMap { membersByID[$0] }
     }
 
-    init(id: UUID = UUID(), title: String, weekday: Int, startOfRotationWeek: Date, participants: [FamilyMember], isEnabled: Bool = true) {
+    init(id: UUID = UUID(), title: String, weekday: Int, startOfRotationWeek: Date, participants: [FamilyMember], isEnabled: Bool = true, score: Int = 1) {
         self.id = id
         self.title = title
         self.weekday = weekday
@@ -24,5 +25,6 @@ final class ChoreRule {
         self.participants = participants
         self.participantOrder = participants.map(\.id)
         self.isEnabled = isEnabled
+        self.score = score
     }
 }

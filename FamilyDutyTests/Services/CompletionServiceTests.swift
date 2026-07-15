@@ -20,6 +20,24 @@ final class CompletionServiceTests: XCTestCase {
         XCTAssertEqual(try context.fetch(FetchDescriptor<CompletionRecord>()).count, 1)
     }
 
+    func testCompleteSnapshotsTaskScoreAndScheduledWorkDate() throws {
+        let container = try ModelContainerFactory.makeInMemoryContainer()
+        let context = container.mainContext
+        let calendar = Calendar.current
+        let scheduledDate = calendar.date(byAdding: .day, value: -1, to: .now)!
+        let member = FamilyMember(name: "小明", sortOrder: 0)
+        let task = ChoreTask(title: "整理书桌", scheduledDate: scheduledDate, score: 3, assignee: member)
+        context.insert(member)
+        context.insert(task)
+
+        try CompletionService(context: context, calendar: calendar)
+            .complete(task, by: member, at: .now)
+
+        let record = try XCTUnwrap(try context.fetch(FetchDescriptor<CompletionRecord>()).first)
+        XCTAssertEqual(record.score, 3)
+        XCTAssertEqual(record.workDate, calendar.startOfDay(for: scheduledDate))
+    }
+
     func testSaveFailureRollsBackTaskAndCompletionRecord() throws {
         let container = try ModelContainerFactory.makeInMemoryContainer()
         let context = container.mainContext

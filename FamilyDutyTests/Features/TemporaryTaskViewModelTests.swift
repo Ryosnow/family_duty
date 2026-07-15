@@ -19,7 +19,36 @@ final class TemporaryTaskViewModelTests: XCTestCase {
         XCTAssertTrue(task.isTemporary)
         XCTAssertEqual(task.assignee?.id, member.id)
         XCTAssertNil(task.rule)
+        XCTAssertEqual(task.score, 1)
         XCTAssertTrue(try context.fetch(FetchDescriptor<ChoreRule>()).isEmpty)
+    }
+
+    func testCreateTaskPersistsConfiguredScore() throws {
+        let container = try ModelContainerFactory.makeInMemoryContainer()
+
+        let task = try TemporaryTaskViewModel(context: container.mainContext).createTask(
+            title: "擦窗户",
+            scheduledDate: .now,
+            score: 2,
+            assignee: nil
+        )
+
+        XCTAssertEqual(task.score, 2)
+    }
+
+    func testCreateTaskRejectsNonPositiveScore() throws {
+        let container = try ModelContainerFactory.makeInMemoryContainer()
+
+        XCTAssertThrowsError(
+            try TemporaryTaskViewModel(context: container.mainContext).createTask(
+                title: "擦窗户",
+                scheduledDate: .now,
+                score: 0,
+                assignee: nil
+            )
+        ) { error in
+            XCTAssertEqual(error as? ScoreValidationError, .invalidScore)
+        }
     }
 
     func testCreateUnassignedTaskCanBeClaimed() throws {

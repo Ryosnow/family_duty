@@ -32,11 +32,13 @@ struct RotationViewModel {
         startOfRotationWeek: Date,
         participants: [FamilyMember],
         isEnabled: Bool,
+        score: Int = 1,
         generateThrough endDate: Date
     ) throws -> ChoreRule {
         let trimmedTitle = title.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmedTitle.isEmpty else { throw RotationRuleValidationError.missingTitle }
         guard !participants.isEmpty else { throw RotationRuleValidationError.missingParticipants }
+        try ScoreValidationService.validate(score: score)
 
         let rule: ChoreRule
         if let existingRule {
@@ -56,13 +58,15 @@ struct RotationViewModel {
             rule.participants = participants
             rule.participantOrder = participants.map(\.id)
             rule.isEnabled = isEnabled
+            rule.score = score
         } else {
             rule = ChoreRule(
                 title: trimmedTitle,
                 weekday: weekday,
                 startOfRotationWeek: startOfRotationWeek,
                 participants: participants,
-                isEnabled: isEnabled
+                isEnabled: isEnabled,
+                score: score
             )
             context.insert(rule)
         }
@@ -88,8 +92,10 @@ struct RotationViewModel {
         assignee: FamilyMember?,
         scheduledDate: Date,
         deadline: Date? = nil,
+        score: Int? = nil,
         cancellationReason: String?
     ) throws {
+        if cancellationReason == nil, let score { try ScoreValidationService.validate(score: score) }
         if cancellationReason == nil {
             try TaskDeadlineService.validate(deadline: deadline, scheduledDate: scheduledDate, calendar: calendar)
         }
@@ -104,6 +110,7 @@ struct RotationViewModel {
             task.assignee = assignee
             task.scheduledDate = scheduledDate
             task.deadline = TaskDeadlineService.normalized(deadline: deadline, calendar: calendar)
+            if let score { task.score = score }
             task.status = .pending
             if !changes.isEmpty { task.adjustmentNote = changes.joined(separator: "、") }
         }

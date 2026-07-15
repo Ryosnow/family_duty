@@ -30,6 +30,29 @@ final class TaskGenerationServiceTests: XCTestCase {
         XCTAssertTrue(tasks.allSatisfy { $0.rule?.id == rule.id && !$0.isTemporary })
     }
 
+    func testEnsureTasksCopiesRuleScoreIntoGeneratedTaskSnapshot() throws {
+        let container = try ModelContainerFactory.makeInMemoryContainer()
+        let context = container.mainContext
+        let calendar = Calendar.current
+        let today = calendar.startOfDay(for: .now)
+        let member = FamilyMember(name: "小明", sortOrder: 0)
+        let rule = ChoreRule(
+            title: "擦窗户",
+            weekday: calendar.component(.weekday, from: today),
+            startOfRotationWeek: today,
+            participants: [member],
+            score: 3
+        )
+        context.insert(member)
+        context.insert(rule)
+
+        try TaskGenerationService(context: context, calendar: calendar)
+            .ensureTasks(for: [rule], through: today)
+
+        let task = try XCTUnwrap(try context.fetch(FetchDescriptor<ChoreTask>()).first)
+        XCTAssertEqual(task.score, 3)
+    }
+
     func testEnsureTasksPreservesExistingAdjustedTask() throws {
         let container = try ModelContainerFactory.makeInMemoryContainer()
         let context = container.mainContext

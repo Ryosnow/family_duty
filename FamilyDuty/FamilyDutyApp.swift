@@ -7,7 +7,11 @@ struct FamilyDutyApp: App {
 
     init() {
         let isUITesting = ProcessInfo.processInfo.arguments.contains("-uiTesting")
-        modelContainer = try! ModelContainerFactory.makeContainer(inMemory: isUITesting)
+        do {
+            modelContainer = try ModelContainerFactory.makeContainer(inMemory: isUITesting)
+        } catch {
+            fatalError("无法加载家庭数据模型容器：\(error.localizedDescription)")
+        }
     }
 
     var body: some Scene {

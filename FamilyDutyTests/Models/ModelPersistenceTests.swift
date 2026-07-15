@@ -34,4 +34,23 @@ final class ModelPersistenceTests: XCTestCase {
         let tasks = try context.fetch(FetchDescriptor<ChoreTask>())
         XCTAssertEqual(tasks.first?.deadline, deadline)
     }
+
+    func testTaskAndCompletionRecordPersistScoreSnapshots() throws {
+        let container = try ModelContainerFactory.makeInMemoryContainer()
+        let context = ModelContext(container)
+        let member = FamilyMember(name: "小明", sortOrder: 0)
+        let task = ChoreTask(title: "浇花", scheduledDate: .now, score: 2, assignee: member, status: .completed)
+        let record = CompletionRecord(task: task, completedBy: member)
+
+        context.insert(member)
+        context.insert(task)
+        context.insert(record)
+        try context.save()
+
+        let savedTask = try XCTUnwrap(try context.fetch(FetchDescriptor<ChoreTask>()).first)
+        let savedRecord = try XCTUnwrap(try context.fetch(FetchDescriptor<CompletionRecord>()).first)
+        XCTAssertEqual(savedTask.score, 2)
+        XCTAssertEqual(savedRecord.score, 2)
+        XCTAssertEqual(savedRecord.workDate, Calendar.current.startOfDay(for: task.scheduledDate))
+    }
 }
