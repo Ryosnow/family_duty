@@ -1,6 +1,21 @@
 import XCTest
 
 final class ReportsFlowUITests: XCTestCase {
+    func testReportsShowsCurrentWeekPlannedWorkload() {
+        let app = XCUIApplication()
+        app.launchArguments = ["-uiTesting", "-seedTaskBoard"]
+        app.launch()
+
+        app.buttons["报表"].tap()
+
+        XCTAssertTrue(app.staticTexts["本周计划工作量"].waitForExistence(timeout: 3))
+        XCTAssertTrue(app.descendants(matching: .any)["planned-workload-summary"].exists)
+        XCTAssertTrue(app.staticTexts["已分配任务"].exists)
+        XCTAssertTrue(app.staticTexts["计划分值"].exists)
+        XCTAssertTrue(app.staticTexts["小明"].exists)
+        XCTAssertTrue(app.staticTexts["小红"].exists)
+    }
+
     func testReportsTabShowsDailyMemberWorkloadAndPeriodControls() {
         let app = XCUIApplication()
         app.launchArguments = ["-uiTesting", "-seedTaskBoard"]

@@ -4,11 +4,14 @@ import SwiftUI
 
 struct ReportsView: View {
     @Query(sort: \FamilyMember.sortOrder) private var members: [FamilyMember]
+    @Query private var tasks: [ChoreTask]
     @Query(sort: \CompletionRecord.completedAt, order: .reverse) private var records: [CompletionRecord]
     @State private var viewModel: ReportsViewModel
+    private let now: Date
 
-    init(initialPeriod: ReportPeriod = .day(.now), calendar: Calendar = .current) {
+    init(initialPeriod: ReportPeriod = .day(.now), calendar: Calendar = .current, now: Date = .now) {
         _viewModel = State(initialValue: ReportsViewModel(initialPeriod: initialPeriod, calendar: calendar))
+        self.now = now
     }
 
     private var summaries: [MemberWorkloadSummary] {
@@ -28,12 +31,23 @@ struct ReportsView: View {
         )
     }
 
+    private var plannedWorkloadSummaries: [PlannedWorkloadSummary] {
+        PlannedWorkloadViewModel.weeklySummaries(
+            for: now,
+            tasks: tasks,
+            members: members,
+            calendar: viewModel.calendar
+        )
+    }
+
     var body: some View {
         NavigationStack {
             ScrollView {
                 VStack(alignment: .leading, spacing: FamilyDutyTheme.sectionSpacing) {
                     reportKindPicker
                     periodNavigator
+
+                    PlannedWorkloadSummaryView(summaries: plannedWorkloadSummaries)
 
                     WorkloadSummaryView(title: "\(viewModel.reportKind.title)总览", summaries: summaries)
 

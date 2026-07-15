@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0531C821CB646978B627A754 /* PlannedWorkloadSummaryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC8ED36D0B6135DC325DD132 /* PlannedWorkloadSummaryView.swift */; };
 		098C53E757DE6B9A90F90337 /* FamilyDutyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 913680AB855C24A98B13E04B /* FamilyDutyTests.swift */; };
 		0D0E1E7A85C2BB96ABE053CF /* ModelPersistenceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 616DF19CEA6DB14851BE1F49 /* ModelPersistenceTests.swift */; };
 		0E5795A045FF557AEDD9400C /* RotationScheduler.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2C1D28DED8F0EFB4B4490B3 /* RotationScheduler.swift */; };
@@ -60,6 +61,7 @@
 		7CDC30C609373EAA9C0E3193 /* DataManagementView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7A9C955FF0991A7EB77B9BF /* DataManagementView.swift */; };
 		7D3908FC4BEA55ABD5D53DDD /* TaskGenerationServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF012DA95C6881E4D98E14FE /* TaskGenerationServiceTests.swift */; };
 		7F62F2950915F7F7E3F57929 /* TaskGenerationCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = F450947533CC8979F3574F81 /* TaskGenerationCoordinator.swift */; };
+		80C3B792E1B8C916B3AE7A8F /* PlannedWorkloadViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CFD0CF7973356FB5657EB09 /* PlannedWorkloadViewModelTests.swift */; };
 		84E95FFEB849DECBCFB4A348 /* TemporaryTaskViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53CC9D61F92F057A604B6272 /* TemporaryTaskViewModelTests.swift */; };
 		87807D608B0F11AEF22E2F09 /* MemberEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D518AA842A15A28848E0801F /* MemberEditorView.swift */; };
 		88DA5B5999A20F4A51AA6B4C /* DashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DED96054579BBBA127E2234 /* DashboardView.swift */; };
@@ -77,6 +79,7 @@
 		AD646B3364E174B56A53496F /* ReportsFlowUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D43A583DFCBAA6FDC793D542 /* ReportsFlowUITests.swift */; };
 		ADA2AD2A5160B715F5ED7FAA /* TemporaryTaskDraft.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DB0FA4F295B3AF20A441969 /* TemporaryTaskDraft.swift */; };
 		BCE70C12986E36D95460282C /* TaskBoardViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2714CE6633E5B2533FCD6A4C /* TaskBoardViewModel.swift */; };
+		BD9E3D914B2A3A38E7862485 /* PlannedWorkloadViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50A84E7F56976C6FE166B1C3 /* PlannedWorkloadViewModel.swift */; };
 		C2C4C060156842E1E508F2E3 /* TaskAdjustmentSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = BAFF07FF1DF87796DB2D4557 /* TaskAdjustmentSheet.swift */; };
 		C3507B7D81285ED0C15928C1 /* TaskBoardViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB15A8686894BA4424C6C2E0 /* TaskBoardViewModelTests.swift */; };
 		C5C49C3CDB0101D1F8F56451 /* RotationViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1784C0FA31F9130F50430D89 /* RotationViewModelTests.swift */; };
@@ -135,6 +138,7 @@
 		45D2E4E8284D971248BBEF06 /* FamilyDutyComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FamilyDutyComponents.swift; sourceTree = "<group>"; };
 		4A602C5D4201DA0E7C9F8C43 /* RotationSchedulerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RotationSchedulerTests.swift; sourceTree = "<group>"; };
 		4DE04ABD541E930648626A74 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		50A84E7F56976C6FE166B1C3 /* PlannedWorkloadViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlannedWorkloadViewModel.swift; sourceTree = "<group>"; };
 		50FE7AA67C161CF1A5E2B9F0 /* CompletionRecord.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompletionRecord.swift; sourceTree = "<group>"; };
 		53CC9D61F92F057A604B6272 /* TemporaryTaskViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TemporaryTaskViewModelTests.swift; sourceTree = "<group>"; };
 		53CD09EC0A435AFB67337649 /* HistoryViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryViewModelTests.swift; sourceTree = "<group>"; };
@@ -161,6 +165,7 @@
 		913680AB855C24A98B13E04B /* FamilyDutyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FamilyDutyTests.swift; sourceTree = "<group>"; };
 		937A62EFD382960B19C87153 /* AppRootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppRootView.swift; sourceTree = "<group>"; };
 		96A21F43A4155EFD8959BB62 /* ModelContainerFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelContainerFactory.swift; sourceTree = "<group>"; };
+		9CFD0CF7973356FB5657EB09 /* PlannedWorkloadViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlannedWorkloadViewModelTests.swift; sourceTree = "<group>"; };
 		B16FCB93498305EEBB6DF260 /* RotationListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RotationListView.swift; sourceTree = "<group>"; };
 		B1FA62774F9D9E7D081CC0E2 /* ScoreValidationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScoreValidationService.swift; sourceTree = "<group>"; };
 		B80A9F115AE80F05C853C8F7 /* WorkloadChartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkloadChartView.swift; sourceTree = "<group>"; };
@@ -182,6 +187,7 @@
 		D518AA842A15A28848E0801F /* MemberEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemberEditorView.swift; sourceTree = "<group>"; };
 		D65EAADF16C372A6F3E4F98F /* CompletionServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompletionServiceTests.swift; sourceTree = "<group>"; };
 		D99F0F81D9D9840B51B45890 /* FamilyDutyTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FamilyDutyTheme.swift; sourceTree = "<group>"; };
+		DC8ED36D0B6135DC325DD132 /* PlannedWorkloadSummaryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlannedWorkloadSummaryView.swift; sourceTree = "<group>"; };
 		E61491AE3E72A5644ECE035F /* ReportsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReportsViewModel.swift; sourceTree = "<group>"; };
 		E6FABB2FEAFFE778A737CB5F /* NotificationSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationSettingsView.swift; sourceTree = "<group>"; };
 		E8E3A59A061CBAACA93466ED /* OnboardingUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingUITests.swift; sourceTree = "<group>"; };
@@ -315,6 +321,8 @@
 		73FB89156438B5FE63FEC7C4 /* Reports */ = {
 			isa = PBXGroup;
 			children = (
+				DC8ED36D0B6135DC325DD132 /* PlannedWorkloadSummaryView.swift */,
+				50A84E7F56976C6FE166B1C3 /* PlannedWorkloadViewModel.swift */,
 				123EDA92294AC4999A4F88A7 /* ReportPeriod.swift */,
 				41CE9DC72DA6AF78F75F900F /* ReportsView.swift */,
 				E61491AE3E72A5644ECE035F /* ReportsViewModel.swift */,
@@ -351,6 +359,7 @@
 			children = (
 				EB72FBB488CDC53412B2B58E /* DashboardViewModelTests.swift */,
 				53CD09EC0A435AFB67337649 /* HistoryViewModelTests.swift */,
+				9CFD0CF7973356FB5657EB09 /* PlannedWorkloadViewModelTests.swift */,
 				8B2D5D7579525F6CE1E264AE /* ReportsViewModelTests.swift */,
 				1784C0FA31F9130F50430D89 /* RotationViewModelTests.swift */,
 				25CB4C89DFD5B21DA30E8B94 /* ScoreReportViewModelTests.swift */,
@@ -567,6 +576,8 @@
 				64512D42936DCEA96C281A50 /* NotificationScheduler.swift in Sources */,
 				5640A7F92B9FBC80C3CCEAAB /* NotificationSettingsView.swift in Sources */,
 				771664CE8BDAFB65AA4CE6D7 /* OnboardingView.swift in Sources */,
+				0531C821CB646978B627A754 /* PlannedWorkloadSummaryView.swift in Sources */,
+				BD9E3D914B2A3A38E7862485 /* PlannedWorkloadViewModel.swift in Sources */,
 				5ED09C32CFFEF98A2F805A7F /* ReportPeriod.swift in Sources */,
 				7765C2A11BDE22396A840E29 /* ReportsView.swift in Sources */,
 				44081A1CF044BDF9FEB3B793 /* ReportsViewModel.swift in Sources */,
@@ -608,6 +619,7 @@
 				90F5ED9C592DD1438603CEAE /* MemberDeletionServiceTests.swift in Sources */,
 				0D0E1E7A85C2BB96ABE053CF /* ModelPersistenceTests.swift in Sources */,
 				F83681B71EC411EC8FD48980 /* NotificationSchedulerTests.swift in Sources */,
+				80C3B792E1B8C916B3AE7A8F /* PlannedWorkloadViewModelTests.swift in Sources */,
 				0F73BED693DEEB73E89DEF6E /* ReportsViewModelTests.swift in Sources */,
 				A01EEE988C9B7CD412FE299B /* RotationSchedulerTests.swift in Sources */,
 				C5C49C3CDB0101D1F8F56451 /* RotationViewModelTests.swift in Sources */,
