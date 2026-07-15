@@ -11,7 +11,13 @@ protocol NotificationCenterClient {
     func requestAuthorization() async throws -> Bool
     func pendingRequestIdentifiers() async -> [String]
     func removePendingRequests(withIdentifiers identifiers: [String])
-    func add(identifier: String, title: String, body: String, dateComponents: DateComponents) async throws
+    func add(
+        identifier: String,
+        title: String,
+        body: String,
+        dateComponents: DateComponents,
+        repeats: Bool
+    ) async throws
 }
 
 final class SystemNotificationCenterClient: NotificationCenterClient {
@@ -41,13 +47,14 @@ final class SystemNotificationCenterClient: NotificationCenterClient {
         identifier: String,
         title: String,
         body: String,
-        dateComponents: DateComponents
+        dateComponents: DateComponents,
+        repeats: Bool
     ) async throws {
         let content = UNMutableNotificationContent()
         content.title = title
         content.body = body
         content.sound = .default
-        let trigger = UNCalendarNotificationTrigger(dateMatching: dateComponents, repeats: true)
+        let trigger = UNCalendarNotificationTrigger(dateMatching: dateComponents, repeats: repeats)
         try await center.add(UNNotificationRequest(identifier: identifier, content: content, trigger: trigger))
     }
 }

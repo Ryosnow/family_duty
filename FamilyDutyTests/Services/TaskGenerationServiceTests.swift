@@ -86,4 +86,39 @@ final class TaskGenerationServiceTests: XCTestCase {
         XCTAssertEqual(tasks[0].id, adjusted.id)
         XCTAssertEqual(tasks[0].assignee?.id, second.id)
     }
+
+    func testEnsureTasksUsesOriginalOccurrenceDateForRescheduledTask() throws {
+        let container = try ModelContainerFactory.makeInMemoryContainer()
+        let context = container.mainContext
+        let calendar = Calendar(identifier: .iso8601)
+        let today = calendar.startOfDay(for: .now)
+        let movedDate = try XCTUnwrap(calendar.date(byAdding: .day, value: 2, to: today))
+        let member = FamilyMember(name: "小明", sortOrder: 0)
+        let rule = ChoreRule(
+            title: "扫地",
+            weekday: calendar.component(.weekday, from: today),
+            startOfRotationWeek: today,
+            participants: [member]
+        )
+        let adjusted = ChoreTask(
+            title: "扫地",
+            scheduledDate: movedDate,
+            sourceScheduledDate: today,
+            assignee: member,
+            rule: rule,
+            isOneOffOverride: true,
+            adjustmentNote: "改期"
+        )
+        context.insert(member)
+        context.insert(rule)
+        context.insert(adjusted)
+        try context.save()
+
+        try TaskGenerationService(context: context, calendar: calendar, now: today)
+            .ensureTasks(for: [rule], through: today)
+
+        let tasks = try context.fetch(FetchDescriptor<ChoreTask>())
+        XCTAssertEqual(tasks.map(\.id), [adjusted.id])
+        XCTAssertEqual(tasks.first?.scheduledDate, movedDate)
+    }
 }

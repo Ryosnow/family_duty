@@ -209,7 +209,53 @@ final class RotationViewModelTests: XCTestCase {
         )
 
         XCTAssertEqual(task.scheduledDate, newDate)
+        XCTAssertEqual(task.sourceScheduledDate, originalDate)
+        XCTAssertTrue(task.isOneOffOverride)
         XCTAssertEqual(rule.weekday, 2)
+    }
+
+    func testEditingRulePreservesDeadlineOnlyOverride() throws {
+        let container = try ModelContainerFactory.makeInMemoryContainer()
+        let context = container.mainContext
+        var calendar = Calendar(identifier: .iso8601)
+        calendar.timeZone = TimeZone(secondsFromGMT: 0)!
+        let today = calendar.startOfDay(for: .now)
+        let deadline = try XCTUnwrap(calendar.date(byAdding: .day, value: 2, to: today))
+        let member = FamilyMember(name: "小明", sortOrder: 0)
+        let rule = ChoreRule(
+            title: "扫地",
+            weekday: calendar.component(.weekday, from: today),
+            startOfRotationWeek: today,
+            participants: [member]
+        )
+        let task = ChoreTask(title: "扫地", scheduledDate: today, assignee: member, rule: rule)
+        context.insert(member)
+        context.insert(rule)
+        context.insert(task)
+        try context.save()
+
+        let viewModel = RotationViewModel(context: context, calendar: calendar, now: today)
+        try viewModel.adjust(
+            task,
+            assignee: member,
+            scheduledDate: today,
+            deadline: deadline,
+            cancellationReason: nil
+        )
+        try viewModel.saveRule(
+            existingRule: rule,
+            title: rule.title,
+            weekday: rule.weekday,
+            startOfRotationWeek: rule.startOfRotationWeek,
+            participants: [member],
+            isEnabled: true,
+            generateThrough: today
+        )
+
+        let tasks = try context.fetch(FetchDescriptor<ChoreTask>())
+        XCTAssertEqual(tasks.map(\.id), [task.id])
+        XCTAssertEqual(tasks.first?.deadline, deadline)
+        XCTAssertTrue(task.isOneOffOverride)
     }
 
     func testCancellingOneTaskRecordsReasonWithoutDisablingRule() throws {

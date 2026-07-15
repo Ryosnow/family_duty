@@ -17,14 +17,16 @@ struct DashboardView: View {
         DashboardViewModel.todayTasks(from: tasks)
     }
 
+    private var todayProgressSummary: (completed: Int, total: Int) {
+        DashboardViewModel.todayProgress(from: tasks)
+    }
+
     private var todayCompletedCount: Int {
-        tasks.filter {
-            $0.status == .completed && Calendar.current.isDate($0.scheduledDate, inSameDayAs: .now)
-        }.count
+        todayProgressSummary.completed
     }
 
     private var todayTotalCount: Int {
-        todayPendingTasks.count + todayCompletedCount
+        todayProgressSummary.total
     }
 
     private var todayProgress: Double {

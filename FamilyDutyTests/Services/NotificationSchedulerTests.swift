@@ -22,11 +22,34 @@ final class NotificationSchedulerTests: XCTestCase {
             now: today
         )
 
-        let daily = try XCTUnwrap(client.added.first { $0.identifier == NotificationScheduler.dailySummaryIdentifier })
+        let daily = try XCTUnwrap(client.added.first {
+            $0.identifier.hasPrefix(NotificationScheduler.dailySummaryIdentifierPrefix)
+        })
         XCTAssertTrue(daily.body.contains("扫地"))
         XCTAssertFalse(daily.body.contains("洗碗"))
         XCTAssertFalse(daily.body.contains("倒垃圾"))
         XCTAssertEqual(daily.dateComponents.hour, 8)
+        XCTAssertEqual(daily.repeats, false)
+    }
+
+    func testRefreshSchedulesFutureDailySummaryWhenTodayHasNoTasks() async throws {
+        let calendar = Calendar(identifier: .iso8601)
+        let today = calendar.startOfDay(for: .now)
+        let tomorrow = try XCTUnwrap(calendar.date(byAdding: .day, value: 1, to: today))
+        let client = NotificationCenterClientSpy()
+        let scheduler = NotificationScheduler(client: client, calendar: calendar)
+
+        try await scheduler.refreshSchedule(
+            for: [ChoreTask(title: "倒垃圾", scheduledDate: tomorrow)],
+            settings: NotificationSettings(isEnabled: true, dailySummaryHour: 8, overdueHour: 19),
+            now: today
+        )
+
+        let daily = try XCTUnwrap(client.added.first {
+            $0.identifier.hasPrefix(NotificationScheduler.dailySummaryIdentifierPrefix)
+        })
+        XCTAssertEqual(daily.dateComponents.day, calendar.component(.day, from: tomorrow))
+        XCTAssertEqual(daily.body, "倒垃圾")
     }
 
     func testRefreshSchedulesOnlyPendingOverdueTasks() async throws {
@@ -46,13 +69,15 @@ final class NotificationSchedulerTests: XCTestCase {
             now: today
         )
 
-        let overdue = try XCTUnwrap(client.added.first { $0.identifier == NotificationScheduler.overdueIdentifier })
+        let overdue = try XCTUnwrap(client.added.first {
+            $0.identifier.hasPrefix(NotificationScheduler.overdueIdentifierPrefix)
+        })
         XCTAssertTrue(overdue.body.contains("擦桌子"))
         XCTAssertFalse(overdue.body.contains("浇花"))
         XCTAssertEqual(overdue.dateComponents.hour, 20)
     }
 
-    func testRefreshDoesNotScheduleTaskBeforeItsExplicitDeadline() async throws {
+    func testRefreshSchedulesOverdueReminderOnlyAfterExplicitDeadline() async throws {
         let calendar = Calendar(identifier: .iso8601)
         let today = calendar.startOfDay(for: .now)
         let scheduledDate = calendar.date(byAdding: .day, value: -1, to: today)!
@@ -67,14 +92,18 @@ final class NotificationSchedulerTests: XCTestCase {
             now: today
         )
 
-        XCTAssertNil(client.added.first { $0.identifier == NotificationScheduler.overdueIdentifier })
+        let overdue = try XCTUnwrap(client.added.first {
+            $0.identifier.hasPrefix(NotificationScheduler.overdueIdentifierPrefix)
+        })
+        let fireDate = try XCTUnwrap(calendar.date(from: overdue.dateComponents))
+        XCTAssertGreaterThan(calendar.startOfDay(for: fireDate), deadline)
     }
 
     func testRefreshRemovesOnlyPreviouslyManagedRequests() async throws {
         let client = NotificationCenterClientSpy()
         client.pendingIdentifiers = [
             NotificationScheduler.dailySummaryIdentifier,
-            NotificationScheduler.overdueIdentifier,
+            NotificationScheduler.overdueIdentifierPrefix + "2026-7-15",
             "another-app-style-request"
         ]
         let scheduler = NotificationScheduler(client: client)
@@ -87,7 +116,10 @@ final class NotificationSchedulerTests: XCTestCase {
 
         XCTAssertEqual(
             Set(client.removedIdentifiers),
-            Set([NotificationScheduler.dailySummaryIdentifier, NotificationScheduler.overdueIdentifier])
+            Set([
+                NotificationScheduler.dailySummaryIdentifier,
+                NotificationScheduler.overdueIdentifierPrefix + "2026-7-15"
+            ])
         )
     }
 }
@@ -98,6 +130,7 @@ private final class NotificationCenterClientSpy: NotificationCenterClient {
         let title: String
         let body: String
         let dateComponents: DateComponents
+        let repeats: Bool
     }
 
     var pendingIdentifiers: [String] = []
@@ -108,7 +141,21 @@ private final class NotificationCenterClientSpy: NotificationCenterClient {
     func requestAuthorization() async throws -> Bool { true }
     func pendingRequestIdentifiers() async -> [String] { pendingIdentifiers }
     func removePendingRequests(withIdentifiers identifiers: [String]) { removedIdentifiers.append(contentsOf: identifiers) }
-    func add(identifier: String, title: String, body: String, dateComponents: DateComponents) async throws {
-        added.append(AddedRequest(identifier: identifier, title: title, body: body, dateComponents: dateComponents))
+    func add(
+        identifier: String,
+        title: String,
+        body: String,
+        dateComponents: DateComponents,
+        repeats: Bool
+    ) async throws {
+        added.append(
+            AddedRequest(
+                identifier: identifier,
+                title: title,
+                body: body,
+                dateComponents: dateComponents,
+                repeats: repeats
+            )
+        )
     }
 }

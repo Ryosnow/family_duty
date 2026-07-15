@@ -12,7 +12,8 @@ struct FamilyDutyIconBadge: View {
             .foregroundStyle(tint)
             .frame(width: size, height: size)
             .background(tint.opacity(0.14), in: Circle())
-            .accessibilityLabel(accessibilityLabel ?? symbolName)
+            .accessibilityHidden(accessibilityLabel == nil)
+            .accessibilityLabel(accessibilityLabel ?? "")
     }
 }
 

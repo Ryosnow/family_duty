@@ -34,9 +34,11 @@ struct LocalBackupService {
             let id: UUID
             let title: String
             let scheduledDate: Date
+            let sourceScheduledDate: Date?
             let deadline: Date?
             let score: Int
             let isTemporary: Bool
+            let isOneOffOverride: Bool?
             let statusRaw: String
             let adjustmentNote: String?
             let assigneeID: UUID?
@@ -130,9 +132,11 @@ struct LocalBackupService {
                     id: $0.id,
                     title: $0.title,
                     scheduledDate: $0.scheduledDate,
+                    sourceScheduledDate: $0.sourceScheduledDate,
                     deadline: $0.deadline,
                     score: $0.score,
                     isTemporary: $0.isTemporary,
+                    isOneOffOverride: $0.isOneOffOverride,
                     statusRaw: $0.statusRaw,
                     adjustmentNote: $0.adjustmentNote,
                     assigneeID: $0.assignee?.id,
@@ -202,11 +206,13 @@ struct LocalBackupService {
                 id: $0.id,
                 title: $0.title,
                 scheduledDate: $0.scheduledDate,
+                sourceScheduledDate: $0.sourceScheduledDate,
                 deadline: $0.deadline,
                 score: $0.score,
                 assignee: $0.assigneeID.flatMap { membersByID[$0] },
                 rule: $0.ruleID.flatMap { rulesByID[$0] },
                 isTemporary: $0.isTemporary,
+                isOneOffOverride: $0.isOneOffOverride ?? ($0.adjustmentNote != nil),
                 status: TaskStatus(rawValue: $0.statusRaw) ?? .pending,
                 adjustmentNote: $0.adjustmentNote
             )
@@ -258,6 +264,15 @@ struct LocalBackupService {
         }
 
         for rule in payload.rules {
+            guard !rule.title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
+                throw BackupError.invalidValue("规则标题")
+            }
+            guard (1...7).contains(rule.weekday) else {
+                throw BackupError.invalidValue("规则星期")
+            }
+            guard !rule.participantIDs.isEmpty else {
+                throw BackupError.invalidValue("规则参与成员")
+            }
             guard Set(rule.participantIDs).count == rule.participantIDs.count else {
                 throw BackupError.invalidValue("规则参与成员顺序")
             }
@@ -269,6 +284,9 @@ struct LocalBackupService {
         }
 
         for task in payload.tasks {
+            guard !task.title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
+                throw BackupError.invalidValue("任务标题")
+            }
             guard TaskStatus(rawValue: task.statusRaw) != nil else {
                 throw BackupError.invalidValue("任务状态")
             }

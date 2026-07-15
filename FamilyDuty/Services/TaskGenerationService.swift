@@ -38,7 +38,12 @@ struct TaskGenerationService {
         var existingTaskKeys = Set<TaskGenerationKey>()
         for task in try context.fetch(FetchDescriptor<ChoreTask>()) {
             guard let ruleID = task.rule?.id else { continue }
-            existingTaskKeys.insert(TaskGenerationKey(ruleID: ruleID, scheduledDate: task.scheduledDate))
+            existingTaskKeys.insert(
+                TaskGenerationKey(
+                    ruleID: ruleID,
+                    scheduledDate: task.sourceScheduledDate ?? task.scheduledDate
+                )
+            )
         }
 
         for rule in rules where rule.isEnabled {
@@ -46,7 +51,14 @@ struct TaskGenerationService {
             while date <= endDate {
                 let key = TaskGenerationKey(ruleID: rule.id, scheduledDate: date)
                 if !existingTaskKeys.contains(key) {
-                    let task = ChoreTask(title: rule.title, scheduledDate: date, score: rule.score, assignee: scheduler.assignee(for: rule, weekOf: date, calendar: calendar), rule: rule)
+                    let task = ChoreTask(
+                        title: rule.title,
+                        scheduledDate: date,
+                        sourceScheduledDate: date,
+                        score: rule.score,
+                        assignee: scheduler.assignee(for: rule, weekOf: date, calendar: calendar),
+                        rule: rule
+                    )
                     context.insert(task)
                     existingTaskKeys.insert(key)
                 }

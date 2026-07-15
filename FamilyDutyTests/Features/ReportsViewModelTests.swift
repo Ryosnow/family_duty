@@ -20,7 +20,10 @@ final class ReportsViewModelTests: XCTestCase {
         )
 
         viewModel.select(.month)
-        XCTAssertEqual(viewModel.period, .month(anchor))
+        XCTAssertEqual(
+            viewModel.period,
+            .month(calendar.date(byAdding: .weekOfYear, value: 1, to: anchor)!)
+        )
     }
 
     func testChangingAnchorDatePreservesSelectedReportKind() {

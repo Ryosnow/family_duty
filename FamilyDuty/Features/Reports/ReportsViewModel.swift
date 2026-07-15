@@ -77,6 +77,7 @@ struct ReportsViewModel: Equatable {
 
     mutating func move(by value: Int) {
         period = period.advanced(by: value, calendar: calendar)
+        selectionAnchorDate = period.anchorDate
     }
 
     mutating func setAnchorDate(_ date: Date) {

@@ -25,6 +25,28 @@ final class DashboardViewModelTests: XCTestCase {
         )
     }
 
+    func testTodayProgressIncludesTemporaryTasksAndExcludesCancelledTasks() {
+        let calendar = testCalendar
+        let now = date(year: 2026, month: 7, day: 15, calendar: calendar)
+        let pendingTemporary = ChoreTask(title: "收快递", scheduledDate: now, isTemporary: true)
+        let completedTemporary = ChoreTask(
+            title: "临时整理",
+            scheduledDate: now,
+            isTemporary: true,
+            status: .completed
+        )
+        let cancelled = ChoreTask(title: "已取消", scheduledDate: now, status: .cancelled)
+
+        let progress = DashboardViewModel.todayProgress(
+            from: [pendingTemporary, completedTemporary, cancelled],
+            now: now,
+            calendar: calendar
+        )
+
+        XCTAssertEqual(progress.completed, 1)
+        XCTAssertEqual(progress.total, 2)
+    }
+
     func testOverdueTasksIncludePendingTasksPastTheirEffectiveDeadline() {
         let calendar = testCalendar
         let now = date(year: 2026, month: 7, day: 15, calendar: calendar)

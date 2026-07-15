@@ -21,10 +21,12 @@ final class LocalBackupServiceTests: XCTestCase {
         let recurringTask = ChoreTask(
             title: "扫地",
             scheduledDate: .now,
+            sourceScheduledDate: .now,
             deadline: Calendar.current.date(byAdding: .day, value: 1, to: .now),
             score: 3,
             assignee: second,
             rule: rule,
+            isOneOffOverride: true,
             status: .completed
         )
         let temporaryTask = ChoreTask(
@@ -58,6 +60,8 @@ final class LocalBackupServiceTests: XCTestCase {
         XCTAssertEqual(rules.first?.participantOrder, [second.id, first.id])
         XCTAssertEqual(tasks.count, 2)
         XCTAssertEqual(tasks.first(where: { !$0.isTemporary })?.rule?.title, "扫地")
+        XCTAssertNotNil(tasks.first(where: { !$0.isTemporary })?.sourceScheduledDate)
+        XCTAssertEqual(tasks.first(where: { !$0.isTemporary })?.isOneOffOverride, true)
         XCTAssertEqual(tasks.first(where: { $0.isTemporary })?.assignee?.name, "小明")
         XCTAssertEqual(records.first?.completedByName, "小红")
         XCTAssertEqual(records.first?.task?.title, "扫地")
@@ -92,5 +96,38 @@ final class LocalBackupServiceTests: XCTestCase {
         )
 
         XCTAssertTrue(try destinationContext.fetch(FetchDescriptor<FamilyMember>()).isEmpty)
+    }
+
+    func testRestoreRejectsInvalidWeekday() throws {
+        let container = try ModelContainerFactory.makeInMemoryContainer()
+        let context = container.mainContext
+        let data = Data("""
+        {
+          "schemaVersion": 1,
+          "members": [{
+            "id": "00000000-0000-0000-0000-000000000001",
+            "name": "小明",
+            "colorName": "blue",
+            "sortOrder": 0
+          }],
+          "rules": [{
+            "id": "00000000-0000-0000-0000-000000000002",
+            "title": "扫地",
+            "weekday": 8,
+            "startOfRotationWeek": "2026-07-15T00:00:00Z",
+            "isEnabled": true,
+            "score": 1,
+            "participantIDs": ["00000000-0000-0000-0000-000000000001"],
+            "participantOrder": ["00000000-0000-0000-0000-000000000001"]
+          }],
+          "tasks": [],
+          "records": []
+        }
+        """.utf8)
+
+        XCTAssertThrowsError(try LocalBackupService(context: context).restore(from: data)) { error in
+            XCTAssertEqual(error as? LocalBackupService.BackupError, .invalidValue("规则星期"))
+        }
+        XCTAssertTrue(try context.fetch(FetchDescriptor<FamilyMember>()).isEmpty)
     }
 }

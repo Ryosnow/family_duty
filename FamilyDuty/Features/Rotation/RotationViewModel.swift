@@ -60,7 +60,7 @@ struct RotationViewModel {
                 task.rule?.id == existingRule.id &&
                 task.scheduledDate >= today &&
                 task.status == .pending &&
-                task.adjustmentNote == nil {
+                !isOneOffOverride(task, relativeTo: existingRule) {
                 deletedTasks.append(task)
                 context.delete(task)
             }
@@ -127,18 +127,31 @@ struct RotationViewModel {
         }
 
         if let cancellationReason {
+            if task.rule != nil, task.sourceScheduledDate == nil {
+                task.sourceScheduledDate = task.scheduledDate
+            }
             task.status = .cancelled
+            task.isOneOffOverride = true
             task.adjustmentNote = cancellationReason.trimmingCharacters(in: .whitespacesAndNewlines)
         } else {
             var changes: [String] = []
             if task.assignee?.id != assignee?.id { changes.append("改派") }
             if !calendar.isDate(task.scheduledDate, inSameDayAs: scheduledDate) { changes.append("改期") }
+            let normalizedDeadline = TaskDeadlineService.normalized(deadline: deadline, calendar: calendar)
+            if task.deadline != normalizedDeadline { changes.append("截止日期") }
+            if let score, task.score != score { changes.append("分值") }
+            if task.rule != nil, !changes.isEmpty, task.sourceScheduledDate == nil {
+                task.sourceScheduledDate = task.scheduledDate
+            }
             task.assignee = assignee
             task.scheduledDate = scheduledDate
-            task.deadline = TaskDeadlineService.normalized(deadline: deadline, calendar: calendar)
+            task.deadline = normalizedDeadline
             if let score { task.score = score }
             task.status = .pending
-            if !changes.isEmpty { task.adjustmentNote = changes.joined(separator: "、") }
+            if !changes.isEmpty {
+                task.isOneOffOverride = true
+                task.adjustmentNote = changes.joined(separator: "、")
+            }
         }
         do {
             try saver(context)
@@ -147,6 +160,14 @@ struct RotationViewModel {
             previousTaskState.restore(on: task)
             throw error
         }
+    }
+
+    private func isOneOffOverride(_ task: ChoreTask, relativeTo rule: ChoreRule) -> Bool {
+        task.isOneOffOverride ||
+        task.adjustmentNote != nil ||
+        task.deadline != nil ||
+        task.score != rule.score ||
+        task.sourceScheduledDate.map { $0 != task.scheduledDate } == true
     }
 
     private struct RuleState {
@@ -182,16 +203,20 @@ struct RotationViewModel {
     private struct TaskState {
         let assignee: FamilyMember?
         let scheduledDate: Date
+        let sourceScheduledDate: Date?
         let deadline: Date?
         let score: Int
+        let isOneOffOverride: Bool
         let status: TaskStatus
         let adjustmentNote: String?
 
         init(task: ChoreTask) {
             assignee = task.assignee
             scheduledDate = task.scheduledDate
+            sourceScheduledDate = task.sourceScheduledDate
             deadline = task.deadline
             score = task.score
+            isOneOffOverride = task.isOneOffOverride
             status = task.status
             adjustmentNote = task.adjustmentNote
         }
@@ -199,8 +224,10 @@ struct RotationViewModel {
         func restore(on task: ChoreTask) {
             task.assignee = assignee
             task.scheduledDate = scheduledDate
+            task.sourceScheduledDate = sourceScheduledDate
             task.deadline = deadline
             task.score = score
+            task.isOneOffOverride = isOneOffOverride
             task.status = status
             task.adjustmentNote = adjustmentNote
         }

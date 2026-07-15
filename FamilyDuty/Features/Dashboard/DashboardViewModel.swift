@@ -15,6 +15,20 @@ enum DashboardViewModel {
         }
     }
 
+    static func todayProgress(
+        from tasks: [ChoreTask],
+        now: Date = .now,
+        calendar: Calendar = .current
+    ) -> (completed: Int, total: Int) {
+        let activeTasks = tasks.filter {
+            $0.status != .cancelled && calendar.isDate($0.scheduledDate, inSameDayAs: now)
+        }
+        return (
+            completed: activeTasks.count(where: { $0.status == .completed }),
+            total: activeTasks.count
+        )
+    }
+
     static func laterThisWeekTasks(
         from tasks: [ChoreTask],
         now: Date = .now,

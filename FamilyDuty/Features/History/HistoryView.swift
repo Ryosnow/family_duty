@@ -52,7 +52,7 @@ struct HistoryView: View {
                     )
                     .listRowBackground(Color.clear)
                 } else {
-                    Section("完成记录（(visibleRecords.count)）") {
+                    Section("完成记录（\(visibleRecords.count)）") {
                         ForEach(visibleRecords) { record in
                             Button {
                                 selectedRecord = record
