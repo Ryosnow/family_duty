@@ -44,11 +44,11 @@ struct AppRootView: View {
     private func seedUITestDataIfNeeded() {
         let arguments = ProcessInfo.processInfo.arguments
         guard arguments.contains("-uiTesting"), members.isEmpty else { return }
-        guard arguments.contains("-seedMember") || arguments.contains("-seedDashboardTask") || arguments.contains("-seedOverdueTask") || arguments.contains("-seedTaskBoard") else { return }
+        guard arguments.contains("-seedMember") || arguments.contains("-seedDashboardTask") || arguments.contains("-seedOverdueTask") || arguments.contains("-seedTaskBoard") || arguments.contains("-seedHistory") else { return }
         let member = FamilyMember(name: "小明", sortOrder: 0)
         let secondMember = FamilyMember(name: "小红", sortOrder: 1)
         context.insert(member)
-        if arguments.contains("-seedTaskBoard") {
+        if arguments.contains("-seedTaskBoard") || arguments.contains("-seedHistory") {
             context.insert(secondMember)
         }
         if arguments.contains("-seedDashboardTask") {
@@ -77,6 +77,17 @@ struct AppRootView: View {
             context.insert(CompletionRecord(task: completedTask, completedBy: member, completedAt: .now))
             context.insert(CompletionRecord(task: secondCompletedTask, completedBy: secondMember, completedAt: .now))
         }
+        if arguments.contains("-seedHistory") {
+            let historyTitles = ["扫地", "洗碗", "擦桌子", "倒垃圾", "整理房间", "浇花", "洗衣服", "擦窗户", "喂宠物", "准备晚餐", "整理书桌", "更换床单", "Test Task"]
+            for (index, title) in historyTitles.enumerated() {
+                let scheduledDate = Calendar.current.date(byAdding: .day, value: -index, to: Calendar.current.startOfDay(for: .now)) ?? .now
+                let assignee = index.isMultiple(of: 2) ? member : secondMember
+                let task = ChoreTask(title: title, scheduledDate: scheduledDate, score: (index % 3) + 1, assignee: assignee, status: .completed)
+                let completedAt = Calendar.current.date(byAdding: .hour, value: 18 + index, to: scheduledDate) ?? scheduledDate
+                context.insert(task)
+                context.insert(CompletionRecord(task: task, completedBy: assignee, completedAt: completedAt))
+            }
+        }
         do {
             try context.save()
         } catch {
@@ -103,6 +114,11 @@ private struct MainTabView: View {
                 .tabItem {
                     Label("报表", systemImage: "chart.bar.xaxis")
                         .accessibilityIdentifier("reports-tab")
+                }
+
+            HistoryView()
+                .tabItem {
+                    Label("历史", systemImage: "clock.arrow.circlepath")
                 }
 
             RotationListView()

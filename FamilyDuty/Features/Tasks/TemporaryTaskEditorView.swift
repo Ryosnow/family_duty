@@ -14,6 +14,11 @@ struct TemporaryTaskEditorView: View {
     @State private var assigneeID: UUID?
     @State private var errorMessage: String?
 
+    init(initialDraft: TemporaryTaskDraft? = nil) {
+        _title = State(initialValue: initialDraft?.title ?? "")
+        _scoreText = State(initialValue: initialDraft.map { String($0.score) } ?? "1")
+    }
+
     var body: some View {
         NavigationStack {
             Form {
