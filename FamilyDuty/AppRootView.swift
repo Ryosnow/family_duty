@@ -3,7 +3,9 @@ import SwiftUI
 
 struct AppRootView: View {
     @Environment(\.modelContext) private var context
+    @Environment(\.scenePhase) private var scenePhase
     @Query private var members: [FamilyMember]
+    @State private var generationErrorMessage: String?
 
     var body: some View {
         Group {
@@ -13,7 +15,30 @@ struct AppRootView: View {
                 MainTabView()
             }
         }
-        .task { seedUITestDataIfNeeded() }
+        .task {
+            seedUITestDataIfNeeded()
+            refreshGeneratedTasks()
+        }
+        .onChange(of: scenePhase) { _, newPhase in
+            guard newPhase == .active else { return }
+            refreshGeneratedTasks()
+        }
+        .alert("无法更新固定任务", isPresented: Binding(
+            get: { generationErrorMessage != nil },
+            set: { if !$0 { generationErrorMessage = nil } }
+        )) {
+            Button("好", role: .cancel) {}
+        } message: {
+            Text(generationErrorMessage ?? "未知错误")
+        }
+    }
+
+    private func refreshGeneratedTasks() {
+        do {
+            try TaskGenerationCoordinator(context: context).refresh()
+        } catch {
+            generationErrorMessage = error.localizedDescription
+        }
     }
 
     private func seedUITestDataIfNeeded() {

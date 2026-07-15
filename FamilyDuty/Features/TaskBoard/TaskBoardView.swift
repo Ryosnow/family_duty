@@ -2,12 +2,15 @@ import SwiftData
 import SwiftUI
 
 struct TaskBoardView: View {
+    @Environment(\.modelContext) private var context
     @Query private var tasks: [ChoreTask]
     @Query(sort: \FamilyMember.sortOrder) private var members: [FamilyMember]
     @Query(sort: \CompletionRecord.completedAt, order: .reverse) private var records: [CompletionRecord]
     @State private var completing: ChoreTask?
     @State private var adjusting: ChoreTask?
     @State private var claiming: ChoreTask?
+    @State private var undoing: ChoreTask?
+    @State private var undoErrorMessage: String?
 
     private var sections: TaskBoardSections {
         TaskBoardViewModel.sections(from: tasks, records: records)
@@ -70,7 +73,17 @@ struct TaskBoardView: View {
                 }
 
                 taskSection(title: "已完成", tasks: sections.completed) { task in
-                    completedTaskRow(task)
+                    HStack(alignment: .top, spacing: 12) {
+                        completedTaskRow(task)
+                        Button("撤销完成", systemImage: "arrow.uturn.backward") {
+                            undoing = task
+                        }
+                        .labelStyle(.iconOnly)
+                        .accessibilityIdentifier("task-board-undo-\(task.id.uuidString)")
+                    }
+                    .swipeActions {
+                        Button("撤销完成", role: .destructive) { undoing = task }
+                    }
                 }
 
                 taskSection(title: "已取消", tasks: sections.cancelled) { task in
@@ -87,6 +100,34 @@ struct TaskBoardView: View {
             .sheet(item: $completing) { task in CompletionSheet(task: task) }
             .sheet(item: $adjusting) { task in TaskAdjustmentSheet(task: task) }
             .sheet(item: $claiming) { task in ClaimTaskSheet(task: task) }
+            .alert("撤销完成？", isPresented: Binding(
+                get: { undoing != nil },
+                set: { if !$0 { undoing = nil } }
+            )) {
+                Button("撤销完成", role: .destructive) { undoCompletedTask() }
+                Button("取消", role: .cancel) {}
+            } message: {
+                Text("任务会回到待处理状态，并可重新选择实际完成人。")
+            }
+            .alert("无法撤销完成", isPresented: Binding(
+                get: { undoErrorMessage != nil },
+                set: { if !$0 { undoErrorMessage = nil } }
+            )) {
+                Button("好", role: .cancel) {}
+            } message: {
+                Text(undoErrorMessage ?? "未知错误")
+            }
+        }
+    }
+
+    private func undoCompletedTask() {
+        guard let task = undoing else { return }
+        do {
+            try CompletionService(context: context).undoCompletion(task)
+            undoing = nil
+        } catch {
+            undoing = nil
+            undoErrorMessage = error.localizedDescription
         }
     }
 

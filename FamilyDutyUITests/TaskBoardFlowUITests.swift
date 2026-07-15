@@ -37,4 +37,24 @@ final class TaskBoardFlowUITests: XCTestCase {
         XCTAssertFalse(task.waitForExistence(timeout: 2))
         XCTAssertTrue(app.staticTexts["面板待处理"].waitForExistence(timeout: 2))
     }
+
+    func testUndoingCompletedTaskReturnsItToPendingActions() {
+        let app = XCUIApplication()
+        app.launchArguments = ["-uiTesting", "-seedTaskBoard"]
+        app.launch()
+
+        app.buttons["任务面板"].tap()
+        let completedTask = app.staticTexts["面板已完成"]
+        XCTAssertTrue(completedTask.waitForExistence(timeout: 3))
+        let undoAction = app.buttons.matching(NSPredicate(format: "label == '撤销完成'" )).firstMatch
+        XCTAssertTrue(undoAction.waitForExistence(timeout: 2))
+        undoAction.tap()
+
+        let confirmation = app.alerts["撤销完成？"]
+        XCTAssertTrue(confirmation.waitForExistence(timeout: 2))
+        confirmation.buttons["撤销完成"].tap()
+
+        XCTAssertTrue(app.staticTexts["面板已完成"].waitForExistence(timeout: 2))
+        XCTAssertTrue(app.staticTexts["待处理"].waitForExistence(timeout: 2))
+    }
 }

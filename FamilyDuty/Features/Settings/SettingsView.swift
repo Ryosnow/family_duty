@@ -24,6 +24,9 @@ struct SettingsView: View {
                 Section("提醒") {
                     NavigationLink("通知设置") { NotificationSettingsView() }
                 }
+                Section("数据") {
+                    NavigationLink("数据管理") { DataManagementView() }
+                }
             }
             .navigationTitle("设置")
             .toolbar {
