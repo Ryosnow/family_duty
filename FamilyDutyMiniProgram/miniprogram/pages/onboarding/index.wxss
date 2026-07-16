@@ -1,0 +1,10 @@
+.onboarding { padding-bottom: 80rpx; }
+.welcome-card { position: relative; overflow: hidden; padding: 54rpx 42rpx 50rpx; border-radius: 42rpx 42rpx 42rpx 10rpx; background: #1f4d3b; color: #fff; }
+.welcome-card::after { content: ""; position: absolute; right: -70rpx; top: -80rpx; width: 260rpx; height: 260rpx; border: 42rpx solid rgba(232,155,41,.7); border-radius: 50%; }
+.eyebrow { display: block; color: #f4c36e; font-size: 22rpx; font-weight: 800; letter-spacing: 5rpx; }
+.welcome-title { display: block; max-width: 520rpx; margin-top: 22rpx; font-size: 52rpx; font-weight: 800; line-height: 1.25; white-space: pre-line; }
+.welcome-copy { display: block; max-width: 520rpx; margin-top: 24rpx; color: rgba(255,255,255,.8); font-size: 25rpx; line-height: 1.65; }
+.member-draft { display: grid; grid-template-columns: 1fr; gap: 16rpx; }
+.add-member, .start-button { margin-top: 22rpx; width: 100%; }
+.hint { display: block; margin-top: 14rpx; color: #68736d; font-size: 24rpx; line-height: 1.6; }
+@media (min-width:760px) { .member-draft { grid-template-columns: 2fr 1fr auto; align-items: center; } }

@@ -1,0 +1,28 @@
+<view class="page-shell onboarding" id="onboarding-view">
+  <view class="welcome-card">
+    <text class="eyebrow">FAMILY DUTY</text>
+    <text class="welcome-title">把家照顾好，\n从分工清楚开始。</text>
+    <text class="welcome-copy">数据只保存在当前微信客户端，不需要登录，也不会上传家庭信息。</text>
+  </view>
+
+  <view class="section">
+    <view class="section-title"><image class="icon" src="/assets/icons/members.svg" />家庭成员</view>
+    <view class="stack">
+      <view wx:for="{{drafts}}" wx:key="id" class="card member-draft" id="onboarding-member-{{item.id}}">
+        <input class="input member-input" value="{{item.name}}" placeholder="成员姓名" data-index="{{index}}" bindinput="updateName" aria-label="成员姓名" />
+        <picker range="{{colors}}" range-key="title" data-index="{{index}}" bindchange="updateColor">
+          <view class="picker">成员颜色：{{item.colorName}}</view>
+        </picker>
+        <button wx:if="{{drafts.length > 1}}" class="button-danger button-small" data-id="{{item.id}}" bindtap="removeMember">移除</button>
+      </view>
+    </view>
+    <button class="button-plain add-member" bindtap="addMember" id="onboarding-add-member">添加成员</button>
+  </view>
+
+  <view class="section card">
+    <text class="field-label">首个固定任务</text>
+    <input class="input" value="{{firstRuleTitle}}" placeholder="例如：洗碗" bindinput="updateRuleTitle" aria-label="首个固定任务" />
+    <text class="hint">任务会从今天开始，每周在成员之间轮换。</text>
+  </view>
+  <button class="button-primary start-button" loading="{{saving}}" disabled="{{saving}}" bindtap="finish">开始使用</button>
+</view>

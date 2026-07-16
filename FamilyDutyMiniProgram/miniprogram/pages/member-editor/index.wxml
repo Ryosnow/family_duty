@@ -1,0 +1,5 @@
+<view class="page-shell" wx:if="{{ready}}">
+  <view class="page-title">{{memberID ? '编辑成员' : '新增成员'}}</view>
+  <view class="card"><view class="preview avatar-{{colorName}}">{{initial}}</view><view class="field"><text class="field-label">成员姓名</text><input class="input" value="{{name}}" placeholder="输入姓名" bindinput="updateName" /></view><view class="field"><text class="field-label">识别颜色</text><view class="colors"><button wx:for="{{colors}}" wx:key="name" class="color color-{{item.name}} {{colorName === item.name ? 'selected' : ''}}" data-name="{{item.name}}" bindtap="selectColor" aria-label="{{item.title}}"></button></view></view></view>
+  <button class="button-primary save" bindtap="save">保存成员</button>
+</view>

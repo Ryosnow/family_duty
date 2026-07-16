@@ -1,0 +1,16 @@
+{
+  "appid": "touristappid",
+  "projectname": "FamilyDutyMiniProgram",
+  "compileType": "miniprogram",
+  "miniprogramRoot": "miniprogram/",
+  "setting": {
+    "es6": true,
+    "enhance": true,
+    "postcss": true,
+    "minified": true,
+    "coverView": true,
+    "lazyloadPlaceholderEnable": true
+  },
+  "simulatorType": "wechat",
+  "condition": {}
+}

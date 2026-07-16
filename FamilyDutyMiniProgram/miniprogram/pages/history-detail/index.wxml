@@ -1,0 +1,5 @@
+<view class="page-shell" wx:if="{{ready}}" id="history-detail">
+  <view class="detail-hero"><image class="detail-icon" src="/assets/icons/task.svg" /><text class="detail-title">{{title}}</text><text class="detail-score">{{score}} 分</text></view>
+  <view class="section card detail-list"><view><text>实际完成者</text><strong>{{memberName}}</strong></view><view><text>计划工作日</text><strong>{{workDate}}</strong></view><view><text>完成时间</text><strong>{{completedAt}}</strong></view></view>
+  <button class="button-primary recreate" bindtap="recreate" id="history-recreate">重新创建类似任务</button>
+</view>

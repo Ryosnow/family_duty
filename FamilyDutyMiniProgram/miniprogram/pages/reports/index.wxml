@@ -1,0 +1,14 @@
+<view class="page-shell" wx:if="{{ready}}" id="reports-view">
+  <view class="page-title">报表</view>
+  <view class="kind-tabs"><button class="kind {{kind === 'day' ? 'selected' : ''}}" data-kind="day" bindtap="selectKind">日报</button><button class="kind {{kind === 'week' ? 'selected' : ''}}" data-kind="week" bindtap="selectKind">周报</button><button class="kind {{kind === 'month' ? 'selected' : ''}}" data-kind="month" bindtap="selectKind">月报</button></view>
+  <view class="period-row"><button class="period-button" data-value="-1" bindtap="movePeriod" aria-label="上一周期">‹</button><picker mode="date" value="{{anchorInput}}" bindchange="updateAnchor"><view class="period-title">{{periodTitle}}</view></picker><button class="period-button" data-value="1" bindtap="movePeriod" aria-label="下一周期">›</button></view>
+  <view class="metrics"><view class="metric dark"><text>完成任务</text><strong>{{totalCount}}</strong></view><view class="metric warm"><text>完成得分</text><strong>{{totalScore}}</strong></view></view>
+
+  <view class="responsive-grid">
+    <view class="section card"><view class="section-title"><image class="icon" src="/assets/icons/chart.svg" />实际完成</view><view wx:for="{{summaries}}" wx:key="memberName" class="summary-row"><text>{{item.memberName}}</text><text class="muted">{{item.completedCount}} 项</text><text class="success">{{item.totalScore}} 分</text></view></view>
+    <view class="section card"><view class="section-title">本周计划负担</view><view wx:for="{{planned}}" wx:key="memberID" class="summary-row"><text>{{item.memberName}}</text><text class="muted">{{item.assignedCount}} 项</text><text class="success">{{item.plannedScore}} 分</text></view></view>
+  </view>
+
+  <view wx:if="{{kind !== 'day'}}" class="section card"><view class="section-title">每日趋势</view><canvas wx:if="{{points.length}}" id="trendCanvas" type="2d" class="chart" aria-label="每日完成得分趋势"></canvas><view wx:else class="empty">这一周期还没有完成记录。</view><view class="point-row" wx:for="{{points}}" wx:key="date"><text>{{item.dateText}} · {{item.memberName}}</text><text>{{item.completedCount}} 项</text><text class="success">{{item.scoreText}}</text></view></view>
+  <button class="history-link" bindtap="openHistory" id="reports-history"><image class="icon" src="/assets/icons/history.svg" />查看完整历史记录<text>›</text></button>
+</view>

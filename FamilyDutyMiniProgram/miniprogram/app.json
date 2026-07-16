@@ -1,0 +1,40 @@
+{
+  "pages": [
+    "pages/dashboard/index",
+    "pages/task-board/index",
+    "pages/reports/index",
+    "pages/rotation/index",
+    "pages/settings/index",
+    "pages/onboarding/index",
+    "pages/history/index",
+    "pages/history-detail/index",
+    "pages/task-editor/index",
+    "pages/task-action/index",
+    "pages/rule-editor/index",
+    "pages/member-editor/index"
+  ],
+  "window": {
+    "navigationBarBackgroundColor": "#F4F5F2",
+    "navigationBarTextStyle": "black",
+    "navigationBarTitleText": "家庭值日",
+    "backgroundColor": "#F4F5F2",
+    "backgroundTextStyle": "dark"
+  },
+  "tabBar": {
+    "custom": true,
+    "color": "#68736D",
+    "selectedColor": "#1F4D3B",
+    "backgroundColor": "#FFFFFF",
+    "list": [
+      { "pagePath": "pages/dashboard/index", "text": "首页" },
+      { "pagePath": "pages/task-board/index", "text": "任务" },
+      { "pagePath": "pages/reports/index", "text": "报表" },
+      { "pagePath": "pages/rotation/index", "text": "轮班" },
+      { "pagePath": "pages/settings/index", "text": "设置" }
+    ]
+  },
+  "style": "v2",
+  "darkmode": true,
+  "themeLocation": "theme.json",
+  "lazyCodeLoading": "requiredComponents"
+}

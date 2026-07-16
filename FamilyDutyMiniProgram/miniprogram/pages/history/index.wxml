@@ -1,0 +1,9 @@
+<view class="page-shell" wx:if="{{ready}}" id="history-view">
+  <view class="page-title">历史记录</view><view class="page-subtitle">按日期、完成人和任务名称回看实际完成情况。</view>
+  <view class="card filters" id="history-filters">
+    <input class="input" value="{{query}}" placeholder="搜索任务名称" bindinput="updateQuery" id="history-search-field" />
+    <view class="filter-grid"><picker range="{{dateScopes}}" range-key="title" value="{{dateScopeIndex}}" bindchange="selectDateScope"><view class="picker">{{dateScopes[dateScopeIndex].title}}</view></picker><picker range="{{members}}" range-key="name" value="{{memberIndex}}" bindchange="selectMember"><view class="picker">{{members[memberIndex].name}}</view></picker></view>
+    <view wx:if="{{dateScope === 'custom'}}" class="filter-grid"><picker mode="date" value="{{startDate}}" bindchange="updateStart"><view class="picker">开始：{{startDate || '请选择'}}</view></picker><picker mode="date" value="{{endDate}}" bindchange="updateEnd"><view class="picker">结束：{{endDate || '请选择'}}</view></picker></view>
+  </view>
+  <view class="section"><view class="section-title"><image class="icon" src="/assets/icons/history.svg" />完成记录<text class="section-count">{{rows.length}}</text></view><view wx:if="{{rows.length}}" class="card records"><view wx:for="{{rows}}" wx:key="id" class="record" data-id="{{item.id}}" bindtap="openDetail" id="history-record-{{item.id}}"><view><text class="record-title">{{item.title}}</text><text class="record-meta">{{item.memberName}} · {{item.completedText}}</text></view><text class="success">{{item.scoreText}}</text><text class="arrow">›</text></view></view><view wx:else class="empty">没有符合当前筛选条件的记录。</view></view>
+</view>

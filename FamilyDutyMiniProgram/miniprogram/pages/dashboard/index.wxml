@@ -1,0 +1,19 @@
+<view class="page-shell" wx:if="{{ready}}" id="dashboard-view">
+  <view class="page-title">家庭值日</view>
+  <view class="hero" id="dashboard-progress-card">
+    <view class="hero-copy"><text class="date">{{dateText}}</text><text class="hero-title">今天一起把家照顾好</text><text class="hero-subtitle">每个人出一点力，家里就会更轻松。</text><button class="button-secondary hero-button" bindtap="addTemporary" id="dashboard-add-temporary">新增临时任务</button></view>
+    <view class="progress" aria-label="今日完成 {{sections.progress.completed}} 项，共 {{sections.progress.total}} 项"><view class="progress-value">{{sections.progress.completed}}/{{sections.progress.total}}</view><view class="progress-label">完成</view><view class="progress-bar"><view class="progress-fill" style="width: {{sections.progress.percent}}%"></view></view></view>
+  </view>
+
+  <view class="responsive-grid">
+    <view>
+      <view wx:if="{{sections.overdue.length}}" class="section"><view class="section-title danger"><image class="icon" src="/assets/icons/alert.svg" />已逾期<text class="section-count">{{sections.overdue.length}}</text></view><view class="stack"><task-card wx:for="{{sections.overdue}}" wx:key="id" task="{{item}}" bind:action="taskAction" /></view></view>
+      <view class="section"><view class="section-title"><image class="icon" src="/assets/icons/task.svg" />今天<text class="section-count">{{sections.today.length}}</text></view><view wx:if="{{sections.today.length}}" class="stack"><task-card wx:for="{{sections.today}}" wx:key="id" task="{{item}}" bind:action="taskAction" /></view><view wx:else class="empty">今天没有固定待办，给自己留一点轻松时间。</view></view>
+      <view class="section"><view class="section-title">本周稍后<text class="section-count">{{sections.later.length}}</text></view><view wx:if="{{sections.later.length}}" class="stack"><task-card wx:for="{{sections.later}}" wx:key="id" task="{{item}}" bind:action="taskAction" /></view><view wx:else class="empty">本周之后暂无固定任务。</view></view>
+    </view>
+    <view>
+      <view class="section"><view class="section-title">临时任务<text class="section-count">{{sections.temporary.length}}</text></view><view wx:if="{{sections.temporary.length}}" class="stack"><task-card wx:for="{{sections.temporary}}" wx:key="id" task="{{item}}" bind:action="taskAction" /></view><view wx:else class="empty">还没有临时任务。</view></view>
+      <view class="section"><view class="row-between section-title"><view><image class="icon" src="/assets/icons/history.svg" />近期完成</view><button class="button-plain button-small" bindtap="openHistory">全部历史</button></view><view wx:if="{{sections.recent.length}}" class="card history-list"><view wx:for="{{sections.recent}}" wx:key="id" class="history-row" data-id="{{item.id}}" bindtap="openRecord"><view><text class="history-title">{{item.title}}</text><text class="history-meta">{{item.memberName}} · {{item.completedText}}</text></view><text class="success">{{item.scoreText}}</text></view></view><view wx:else class="empty">完成任务后，记录会出现在这里。</view></view>
+    </view>
+  </view>
+</view>

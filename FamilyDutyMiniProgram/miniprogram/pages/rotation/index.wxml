@@ -1,0 +1,11 @@
+<view class="page-shell" wx:if="{{ready}}" id="rotation-view">
+  <view class="row-between"><view><view class="page-title">固定轮班</view><view class="page-subtitle">固定规则决定未来任务；单次调整不会改变后续顺序。</view></view><button class="button-primary add-button" bindtap="addRule" id="rotation-add-rule">新增</button></view>
+  <view wx:if="{{rules.length}}" class="stack">
+    <view class="card rule" wx:for="{{rules}}" wx:key="id" data-id="{{item.id}}" bindtap="editRule">
+      <view class="rule-icon"><image src="/assets/icons/rotation.svg" /></view>
+      <view class="rule-content"><view class="row-between"><text class="rule-title">{{item.title}}</text><text class="score">{{item.score}} 分</text></view><text class="meta">{{item.weekdayTitle}} · 下次 {{item.nextDate}} · {{item.nextAssignee}}</text><text class="order">{{item.participantNames}}</text></view>
+      <switch checked="{{item.enabled}}" color="#2E7D5B" data-id="{{item.id}}" catchtap="stop" catch:change="toggleRule" aria-label="{{item.enabled ? '停用规则' : '启用规则'}}" />
+    </view>
+  </view>
+  <view wx:else class="empty">还没有固定轮班。创建规则后，小程序会自动生成未来八周任务。</view>
+</view>

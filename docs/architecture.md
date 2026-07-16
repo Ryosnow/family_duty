@@ -362,3 +362,16 @@ UI 测试使用内存容器和 `-seedDashboardTask`、`-seedOverdueTask`、`-see
 - 任何涉及成员删除、完成撤销、备份恢复或批量数据替换的操作，都必须保留校验、原子保存和失败恢复路径。
 - 修改用户可见 UI 时保留稳定的 accessibility identifier，并在浅色/深色、横竖屏、Dynamic Type 和 VoiceOver 场景下回归验证。
 - 架构或业务规则发生变化时同步更新本文；工程命令、产品范围或数据限制发生变化时同步更新 `README.md` 和相关计划文档。
+
+## 12. 微信小程序实现
+
+`FamilyDutyMiniProgram/` 是与 SwiftUI 客户端并列的原生 TypeScript 客户端，不复用 Swift 源文件，但保持相同领域语义和备份 schema version 1。
+
+- `domain/` 保存纯 TypeScript 模型、日期归一化、轮班、任务、完成、报表、历史与校验逻辑。
+- `data/StorageRepository` 将完整状态按 UTF-8 大小分块，写完新快照后再原子切换活动 manifest，并保留上一快照用于恢复。
+- `store/AppStore` 串行化写事务，页面只调用领域服务，不直接写 Storage。
+- 五个原生 Tab 为首页、任务、报表、轮班和设置；历史是报表及首页的二级入口。
+- JSON 备份字段与 `LocalBackupService.BackupPayload` 对齐；通知设置不进入备份，和 iPad 当前行为一致。
+- 小程序没有离线后台通知，提醒只在 `App.onShow` 期间检查并展示。
+
+小程序端的回归入口是 `npm run verify`；微信开发者工具负责 WXML/WXSS、Canvas、横宽屏和真机交互验收。

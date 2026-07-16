@@ -1,0 +1,11 @@
+<view class="page-shell" wx:if="{{ready}}" id="task-board-view">
+  <view class="page-title">任务面板</view>
+  <view class="card summary-card" id="task-board-summary">
+    <view class="row-between"><view class="section-title"><image class="icon" src="/assets/icons/chart.svg" />今日工作量</view><button class="button-plain button-small" bindtap="openReports">查看报表</button></view>
+    <view class="metrics"><view><text class="metric-value">{{totalCompleted}}</text><text class="metric-label">完成任务</text></view><view><text class="metric-value">{{totalScore}}</text><text class="metric-label">总得分</text></view></view>
+    <view class="member-summary" wx:for="{{summaries}}" wx:key="memberName"><text>{{item.memberName}}</text><text class="muted">完成 {{item.completedCount}} 项</text><text class="success">{{item.totalScore}} 分</text></view>
+  </view>
+  <view class="section"><view class="section-title">待处理<text class="section-count">{{sections.pending.length}}</text></view><view wx:if="{{sections.pending.length}}" class="stack"><task-card wx:for="{{sections.pending}}" wx:key="id" task="{{item}}" bind:action="taskAction" /></view><view wx:else class="empty">今天没有待处理任务。</view></view>
+  <view class="section"><view class="section-title success">已完成<text class="section-count">{{sections.completed.length}}</text></view><view wx:if="{{sections.completed.length}}" class="stack"><task-card wx:for="{{sections.completed}}" wx:key="id" task="{{item}}" showUndo bind:action="taskAction" /></view><view wx:else class="empty">今天还没有完成记录。</view></view>
+  <view class="section"><view class="section-title danger">已取消<text class="section-count">{{sections.cancelled.length}}</text></view><view wx:if="{{sections.cancelled.length}}" class="stack"><task-card wx:for="{{sections.cancelled}}" wx:key="id" task="{{item}}" readonly /></view><view wx:else class="empty">今天没有取消任务。</view></view>
+</view>

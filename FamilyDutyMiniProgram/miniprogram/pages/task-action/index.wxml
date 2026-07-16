@@ -1,0 +1,5 @@
+<view class="page-shell" wx:if="{{ready}}">
+  <view class="action-hero"><image src="/assets/icons/task.svg" /><text class="eyebrow">{{mode === 'claim' ? '领取任务' : '确认完成'}}</text><text class="action-title">{{taskTitle}}</text></view>
+  <view class="section card"><text class="field-label">{{mode === 'claim' ? '领取人' : '实际完成人'}}</text><picker range="{{members}}" range-key="name" value="{{memberIndex}}" bindchange="selectMember"><view class="picker">{{members[memberIndex].name}}</view></picker><text class="hint" wx:if="{{mode === 'complete'}}">实际完成人可以与任务负责人不同，报表会按这里的选择统计。</text></view>
+  <button class="button-primary submit" bindtap="submit">{{mode === 'claim' ? '确认领取' : '确认完成'}}</button>
+</view>

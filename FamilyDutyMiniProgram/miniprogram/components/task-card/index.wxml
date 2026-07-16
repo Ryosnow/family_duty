@@ -1,0 +1,17 @@
+<view class="task-card {{task.overdue ? 'task-card-overdue' : ''}}" aria-role="group" aria-label="{{task.title}}，负责人{{task.assignee}}，{{task.statusText}}">
+  <view class="top-row">
+    <view class="icon-wrap {{task.overdue ? 'icon-danger' : ''}}"><image class="icon" src="{{task.overdue ? '/assets/icons/alert.svg' : '/assets/icons/task.svg'}}" mode="aspectFit" /></view>
+    <view class="content">
+      <view class="title-row"><text class="title">{{task.title}}</text><text class="status {{task.overdue ? 'danger' : ''}}">{{task.statusText}}</text></view>
+      <view class="member-row"><view class="avatar avatar-{{task.memberColor}}">{{task.initial}}</view><text>{{task.assignee}}</text><text class="score">{{task.scoreText}}</text></view>
+      <text class="meta">{{task.dateText}} · {{task.deadlineText}}</text>
+      <text wx:if="{{task.adjustmentNote}}" class="note">{{task.adjustmentNote}}</text>
+    </view>
+  </view>
+  <view wx:if="{{!readonly}}" class="actions">
+    <button wx:if="{{task.status === 'pending' && !task.assigneeID}}" class="action" data-action="claim" bindtap="emitAction">领取</button>
+    <button wx:if="{{task.status === 'pending' && task.assigneeID}}" class="action primary" data-action="complete" bindtap="emitAction">完成</button>
+    <button wx:if="{{task.status === 'pending'}}" class="action" data-action="adjust" bindtap="emitAction">调整</button>
+    <button wx:if="{{showUndo && task.status === 'completed'}}" class="action" data-action="undo" bindtap="emitAction">撤销完成</button>
+  </view>
+</view>

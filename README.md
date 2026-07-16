@@ -52,11 +52,24 @@ FamilyDuty/
 └── AppRootView.swift / FamilyDutyApp.swift
 FamilyDutyTests/   模型、服务和 ViewModel 单元测试
 FamilyDutyUITests/ 首次引导、主要流程和无障碍 UI 测试
+FamilyDutyMiniProgram/ 原生 TypeScript 微信小程序与 Vitest 测试
 docs/plans/        功能实现和设计计划
 project.yml        XcodeGen 工程配置
 ```
 
 完整的代码分层、模块职责、数据关系和计划文件映射见 [`docs/architecture.md`](docs/architecture.md)；各功能模块的详细操作、状态和验收边界见 [`docs/functional-architecture.md`](docs/functional-architecture.md)。
+
+## 微信小程序版本
+
+`FamilyDutyMiniProgram/` 提供与 iPad 版相同核心业务语义的离线微信小程序：五项底部导航、任务生命周期、固定轮班、报表、历史、成员管理及 JSON 备份恢复。历史入口位于报表页；后台本地通知在小程序端改为打开应用时触发的应用内提醒。
+
+```bash
+cd FamilyDutyMiniProgram
+npm install
+npm run verify
+```
+
+随后在微信开发者工具中导入该目录。默认使用 `touristappid`，真机预览或发布前需替换为自己的 AppID。详细说明见 [`FamilyDutyMiniProgram/README.md`](FamilyDutyMiniProgram/README.md)。
 
 ## 生成并打开工程
 

@@ -24,6 +24,13 @@ Keep the product’s current scope local and offline. Do not introduce login, cl
 - `FamilyDuty/DesignSystem/` contains shared colors, spacing, card styling, typography, and reusable SwiftUI components.
 - `FamilyDuty/AppRootView.swift` and `FamilyDuty/FamilyDutyApp.swift` contain app startup, onboarding branching, primary navigation, SwiftData setup, UI-test seeding, and notification refresh wiring.
 
+`FamilyDutyMiniProgram/` contains the native offline WeChat Mini Program:
+
+- `miniprogram/domain/` mirrors the Swift models and reusable business rules in TypeScript.
+- `miniprogram/data/` owns versioned local-storage snapshots and iPad-compatible backup conversion.
+- `miniprogram/pages/` and `components/` contain WXML/WXSS presentation and interactions.
+- `tests/` contains Vitest coverage for domain rules, rollback, backup compatibility, and storage recovery.
+
 Tests mirror the application areas:
 
 - `FamilyDutyTests/` contains XCTest coverage for models, services, ViewModels, persistence, scheduling, notifications, reports, and validation.
@@ -81,6 +88,16 @@ xcodebuild test \
 ```
 
 Replace the simulator name if it is not installed. Use `xcrun simctl list devices available` to inspect available devices. UI tests launch with `-uiTesting` and use an in-memory model container; seed flags such as `-seedDashboardTask`, `-seedOverdueTask`, and `-seedTaskBoard` are test-only data setup.
+
+Verify the WeChat Mini Program domain and TypeScript code:
+
+```bash
+cd FamilyDutyMiniProgram
+npm install
+npm run verify
+```
+
+Import `FamilyDutyMiniProgram/` into WeChat Developer Tools for simulator and device validation. Keep its main data path offline; application reminders run only while the mini program is active.
 
 ## Coding Style & Naming Conventions
 

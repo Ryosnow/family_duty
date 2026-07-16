@@ -1,0 +1,1 @@
+{ "navigationBarTitleText": "家庭值日", "enablePullDownRefresh": true, "usingComponents": { "task-card": "/components/task-card/index" } }

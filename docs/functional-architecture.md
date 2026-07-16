@@ -602,3 +602,15 @@ sequenceDiagram
 4. 只影响展示：优先修改 DesignSystem 或展示组件，不改变模型字段和查询语义。
 5. 影响用户流程：补充稳定 accessibility identifier 和对应 UI 测试。
 6. 任何规则级与实例级行为都要明确写出作用范围，防止一次调整意外改变未来轮班。
+
+## 7. 微信小程序功能映射
+
+`FamilyDutyMiniProgram/` 保留本文定义的成员、规则、任务实例和完成记录状态机。首页、任务面板、报表、轮班与设置是五个 Tab，历史中心从首页近期完成或报表进入。
+
+平台差异只有以下三项：
+
+1. SwiftData 替换为本地分块快照仓库，事务失败时不切换活动快照。
+2. UserNotifications 替换为 `App.onShow` 的应用内提醒，不承诺后台通知。
+3. 系统文件导出器替换为微信文件转发与会话文件选择，JSON schema version 1 保持双向兼容。
+
+其他业务不变量——未来八周生成、`participantOrder` 轮换、单次调整、Deadline、实际完成人快照、去重报表、成员删除保护——必须在两个客户端保持一致。

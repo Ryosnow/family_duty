@@ -1,6 +1,8 @@
 .DS_Store
 DerivedData/
 build/
+FamilyDutyMiniProgram/node_modules/
+FamilyDutyMiniProgram/project.private.config.json
 *.xcuserstate
 xcuserdata/
 *.moved-aside

@@ -1,0 +1,2 @@
+.order-row { display:grid;grid-template-columns:auto 1fr auto auto;align-items:center;gap:12rpx;min-height:90rpx;border-bottom:1rpx solid #edf0ee; }.order-row:last-child { border-bottom:none; }.order-number { display:flex;align-items:center;justify-content:center;width:44rpx;height:44rpx;border-radius:50%;background:#e4f0e9;color:#1f4d3b;font-size:22rpx;font-weight:800; }.order-name { display:none; }.order-member { font-weight:700; }.save { width:100%;margin-top:30rpx; }
+@media (prefers-color-scheme:dark) { .order-row { border-color:#354139; } }

@@ -1,0 +1,7 @@
+.tabbar { position: fixed; z-index: 999; right: 22rpx; bottom: calc(env(safe-area-inset-bottom) + 18rpx); left: 22rpx; display: flex; height: 104rpx; overflow: hidden; border: 1rpx solid rgba(31,77,59,.13); border-radius: 30rpx; background: rgba(255,255,255,.96); box-shadow: 0 18rpx 48rpx rgba(31,77,59,.15); }
+.tab { position: relative; display: flex; flex: 1; align-items: center; justify-content: center; color: #68736d; font-size: 25rpx; font-weight: 650; }
+.label { line-height: 104rpx; }
+.indicator { position: absolute; top: 8rpx; width: 28rpx; height: 6rpx; border-radius: 6rpx; background: transparent; }
+.selected { color: #1f4d3b; }
+.selected .indicator { background: #e89b29; }
+@media (prefers-color-scheme: dark) { .tabbar { border-color: #35433b; background: rgba(27,36,31,.97); } .tab { color: #a9b5ae; } .selected { color: #eef5f0; } }
